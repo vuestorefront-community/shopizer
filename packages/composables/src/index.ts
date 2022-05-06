@@ -30,6 +30,8 @@ export { userBillingGetters } from './getters/userBillingGetters';
 export { userGetters } from './getters/userGetters';
 export { userShippingGetters } from './getters/userShippingGetters';
 export { wishlistGetters } from './getters/wishlistGetters';
+export { marketGetters } from './getters/marketGetters';
+export { contentGetters } from './getters/contentGetters';
 
 // Types
 export * from './types';

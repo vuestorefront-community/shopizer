@@ -1,12 +1,16 @@
-import { Store } from '@vue-storefront/shopizer-api';
-import { Context, useStoreFactory } from '@vue-storefront/core';
+import {
+  Context,
+  useStoreFactory,
+  UseStoreFactoryParams
+} from '@vue-storefront/core';
+import type { Store } from '@vue-storefront/shopizer-api';
 
-export const useStore = useStoreFactory<Store>({
+const params: UseStoreFactoryParams<Store> = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  load(context: Context, params) {
-    console.log('Mocked: useStore.load');
-
-    return Promise.resolve({});
+  load: async (context: Context) => {
+    console.log('Mocked: useUser.load');
+    const response = await context.$shopizer.api.getStore(context);
+    return response;
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -15,4 +19,6 @@ export const useStore = useStoreFactory<Store>({
 
     return Promise.resolve({});
   }
-});
+};
+
+export const useStore = useStoreFactory<Store>(params);

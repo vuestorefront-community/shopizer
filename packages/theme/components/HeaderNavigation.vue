@@ -1,0 +1,115 @@
+
+<template>
+  <div class="sf-header__navigation desktop" v-if="!isMobile">
+    <!-- eslint-disable vue/no-use-v-if-with-v-for,vue/no-confusing-v-for-v-if -->
+    <SfHeaderNavigationItem
+      v-for="(category, index) in categories"
+      :key="index"
+      class="nav-item"
+      v-e2e="`app-header-url_${category}`"
+      :label="category.description.name"
+      :link="localePath(`/category/${category.description.friendlyUrl}`)"
+      v-if="category.visible"
+    />
+    <SfHeaderNavigationItem
+      v-for="(content, index) in contents"
+      :key="index"
+      class="nav-item"
+      v-e2e="`app-header-url_${content}`"
+      :label="content.description.name"
+      :link="localePath(`/content/${content.description.friendlyUrl}`)"
+      v-if="content.visible && content.description"
+    />
+  </div>
+  <!-- eslint-disable vue/no-use-v-if-with-v-for,vue/no-confusing-v-for-v-if -->
+  <SfModal v-else :visible="isMobileMenuOpen">
+    <SfHeaderNavigationItem
+      v-for="(category, index) in categories"
+      :key="index"
+      class="nav-item"
+      v-e2e="`app-header-url_${category}`"
+      v-if="category.visible"
+    >
+      <template #mobile-navigation-item>
+        <SfMenuItem
+          :label="category.description.name"
+          class="sf-header-navigation-item__menu-item"
+          :link="localePath(`/category/${category.description.friendlyUrl}`)"
+          @click="toggleMobileMenu"
+        />
+      </template>
+    </SfHeaderNavigationItem>
+    <SfHeaderNavigationItem
+      v-for="(content, index) in contents"
+      :key="index"
+      class="nav-item"
+      v-e2e="`app-header-url_${content}`"
+      v-if="content.visible && content.description"
+    >
+      <template #mobile-navigation-item>
+        <SfMenuItem
+          :label="content.description.name"
+          class="sf-header-navigation-item__menu-item"
+          :link="localePath(`/category/${content.description.friendlyUrl}`)"
+          @click="toggleMobileMenu"
+        />
+      </template>
+    </SfHeaderNavigationItem>
+  </SfModal>
+</template>
+
+<script>
+import { SfMenuItem, SfModal } from '@storefront-ui/vue';
+import { useUiState } from '~/composables';
+import { useContent, contentGetters } from '@vue-storefront/shopizer';
+import { computed } from '@nuxtjs/composition-api';
+import { onSSR } from '@vue-storefront/core';
+
+export default {
+  name: 'HeaderNavigation',
+  components: {
+    SfMenuItem,
+    SfModal
+  },
+  props: {
+    isMobile: {
+      type: Boolean,
+      default: false
+    }
+  },
+  setup() {
+    const { isMobileMenuOpen, toggleMobileMenu } = useUiState();
+    const { getCategoryHierarchy, categoryData, getContent, contentData } = useContent();
+
+    onSSR(async () => {
+      await getCategoryHierarchy();
+      await getContent();
+    });
+    const categories = computed(() => contentGetters.getCategoryData(categoryData?.value));
+    const contents = computed(() => contentGetters.getContentData(contentData?.value));
+    // console.log(contents);
+    return {
+      categories,
+      contents,
+      isMobileMenuOpen,
+      toggleMobileMenu
+    };
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+.sf-header-navigation-item {
+  ::v-deep &__item--mobile {
+    display: block;
+  }
+}
+.sf-modal {
+  ::v-deep &__bar {
+    display: none;
+  }
+  ::v-deep &__content {
+    padding: var(--modal-content-padding, var(--spacer-base) 0);
+  }
+}
+</style>
