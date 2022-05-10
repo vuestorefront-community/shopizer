@@ -8,7 +8,7 @@
       <!-- TODO: add mobile view buttons after SFUI team PR -->
       <template #logo>
         <nuxt-link :to="localePath({ name: 'home' })" class="sf-header__logo">
-          <SfImage :src='marketLogo' alt="Vue Storefront Next" class="sf-header__logo-image"/>
+          <SfImage :src='marketLogo' alt="Vue Storefront Next" class="sf-header__logo-image" v-if="marketLogo"/>
         </nuxt-link>
       </template>
       <template #navigation>

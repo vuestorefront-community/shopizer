@@ -8,8 +8,13 @@ function getContentData (contents: Contents): any[] {
   // console.log(contents);
   return contents?.items || [];
 }
+function getFeatureItemsData (featureItems: Contents): any[] {
+  // console.log(contents);
+  return featureItems?.products || [];
+}
 
 export const contentGetters = {
   getCategoryData,
-  getContentData
+  getContentData,
+  getFeatureItemsData
 };
