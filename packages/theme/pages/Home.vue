@@ -57,18 +57,6 @@
             />
           </template>
           <SfCarouselItem class="carousel__item" v-for="(product, i) in products" :key="i">
-            <!-- <SfProductCard
-              :title="product.title"
-              :image="product.image"
-              :regular-price="product.price.regular"
-              :max-rating="product.rating.max"
-              :score-rating="product.rating.score"
-              :show-add-to-cart-button="true"
-              :is-on-wishlist="product.isInWishlist"
-              :link="localePath({ name: 'home' })"
-              class="carousel__item__product"
-              @click:wishlist="toggleWishlist(i)"
-            /> -->
             <SfProductCard
               :title="product.description.name"
               :image="product.images && product.images.length > 0 && product.images[0].imageUrl"
@@ -77,10 +65,10 @@
               :max-rating="5"
               :score-rating="product.rating"
               wishlistIcon=""
-              :show-add-to-cart-button="product.available && product.canBePurchased && product.visible && product.quantity > 0 ? true : false"
-              :link="localePath({ name: `product/${product.description.friendlyUrl}` })"
+              :show-add-to-cart-button="product.available || product.canBePurchased || product.visible || product.quantity > 0"
+              :link="localePath(`/p/${product.id}/${product.description.friendlyUrl}`)"
               class="carousel__item__product"
-               @click:add-to-cart="addItemToCart({ product, quantity: 1 })"
+              @click:add-to-cart="addItemToCart({ product, quantity: 1 })"
             />
           </SfCarouselItem>
         </SfCarousel>

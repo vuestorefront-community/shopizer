@@ -8,24 +8,23 @@ export const useContent = (): any => {
   const contentresult = sharedRef(null, 'content');
   const featureItemResult = sharedRef(null, 'features');
 
-  const getCategoryHierarchy = async() => {
+  const getCategoryHierarchy = async(params: any) => {
     console.log('load: getCategoryHierarchy');
-    const category: any = await context.$shopizer.api.getCategoryHierarchy(context.$shopizer);
+    const category: any = await context.$shopizer.api.getCategoryHierarchy(params);
     // console.log(category);
     categoryresult.value = category;
     return category;
   };
-  const getContent = async() => {
+  const getContent = async(params: any) => {
     console.log('load: getContent');
-    const contents: any = await context.$shopizer.api.getContent(context.$shopizer);
-    // console.log(contents);
+    const contents: any = await context.$shopizer.api.getContent(params);
     contentresult.value = contents;
     return contents;
   };
 
   const getFeaturedItem = async () => {
     console.log('load: getFeaturedItem');
-    const featuredItems: any = await context.$shopizer.api.getFeaturedItems(context.$shopizer);
+    const featuredItems: any = await context.$shopizer.api.getFeaturedItems();
     featureItemResult.value = featuredItems;
     // console.log(featuredItems);
     return featuredItems;

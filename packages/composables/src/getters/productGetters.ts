@@ -5,10 +5,11 @@ import {
   ProductGetters
 } from '@vue-storefront/core';
 import type { Product, ProductFilter } from '@vue-storefront/shopizer-api';
+// import { option } from 'yargs';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getName(product: Product): string {
-  return 'Name';
+  return product?.description?.name || '';
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -19,20 +20,15 @@ function getSlug(product: Product): string {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getPrice(product: Product): AgnosticPrice {
   return {
-    regular: 0,
-    special: 0
+    regular: product?.originalPrice || 0,
+    special: product?.finalPrice || 0,
+    discounted: product?.discounted || false
   };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getGallery(product: Product): AgnosticMediaGalleryItem[] {
-  return [
-    {
-      small: 'https://s3-eu-west-1.amazonaws.com/commercetools-maximilian/products/081223_1_large.jpg',
-      normal: 'https://s3-eu-west-1.amazonaws.com/commercetools-maximilian/products/081223_1_large.jpg',
-      big: 'https://s3-eu-west-1.amazonaws.com/commercetools-maximilian/products/081223_1_large.jpg'
-    }
-  ];
+  return product?.images || [];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -42,35 +38,30 @@ function getCoverImage(product: Product): string {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getFiltered(products: Product[], filters: ProductFilter): Product[] {
-  return [
-    {
-      _id: 1,
-      _description: 'Some description',
-      _categoriesRef: [
-        '1',
-        '2'
-      ],
-      name: 'Black jacket',
-      sku: 'black-jacket',
-      images: [
-        'https://s3-eu-west-1.amazonaws.com/commercetools-maximilian/products/081223_1_large.jpg'
-      ],
-      price: {
-        original: 12.34,
-        current: 10.00
-      }
-    }
-  ];
+  return products || {};
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getAttributes(products: Product[] | Product, filterByAttributeName?: string[]): Record<string, AgnosticAttribute | string> {
-  return {};
+  return {
+    properties: products?.properties || [],
+    radioOptions: products?.options ? products?.options.filter((option) => {
+      return option.type === 'radio';
+    }) : [],
+    selectOptions: products?.options ? products?.options.filter((option) => {
+      return option.type === 'select';
+    }) : [],
+    weight: products?.productSpecifications?.weight || '',
+    length: products?.productSpecifications?.length || '',
+    width: products?.productSpecifications?.width || '',
+    height: products?.productSpecifications?.height || ''
+  };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getDescription(product: Product): string {
-  return '';
+  // console.log(product);
+  return product?.description?.description || '';
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

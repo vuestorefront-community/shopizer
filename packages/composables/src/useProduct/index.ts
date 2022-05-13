@@ -12,8 +12,8 @@ const params: UseProductFactoryParams<Product, SearchParams> = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   productsSearch: async (context: Context, params) => {
     console.log('Mocked: useProduct.productsSearch');
-
-    return {};
+    const products: any = await context.$shopizer.api.getProductDetails(params);
+    return products;
   }
 };
 
