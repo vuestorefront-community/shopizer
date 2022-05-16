@@ -1,14 +1,17 @@
 
-import type { Category, Contents } from '@vue-storefront/shopizer-api';
-function getCategoryData (category: Category): any[] {
+// import type { Category, Contents } from '@vue-storefront/shopizer-api';
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function getCategoryData (category: any): any[] {
   // console.log(category);
   return category?.categories || [];
 }
-function getContentData (contents: Contents): any[] {
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function getContentData (contents: any): any[] {
   // console.log(contents);
   return contents?.items || [];
 }
-function getFeatureItemsData (featureItems: Contents): any[] {
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function getFeatureItemsData (featureItems: any): any[] {
   // console.log(contents);
   return featureItems?.products || [];
 }

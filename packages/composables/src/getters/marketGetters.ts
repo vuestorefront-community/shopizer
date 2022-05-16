@@ -1,8 +1,11 @@
-import type { Store } from '@vue-storefront/shopizer-api';
-function getStoreLogo (store: Store): string {
+// import type { Store } from '@vue-storefront/shopizer-api';
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function getStoreLogo (store: any): string {
   return store?.logo.path || '';
 }
-function getStoreData (store: Store): string {
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function getStoreData (store: any): string {
   return store || '';
 }
 
