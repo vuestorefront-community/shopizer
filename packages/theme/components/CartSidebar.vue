@@ -9,36 +9,35 @@
     >
       <template #content-top>
         <SfProperty
-          v-if="totalItems"
+          v-if="cartData"
           class="sf-property--large cart-summary desktop-only"
           name="Total items"
-          :value="totalItems"
+          :value="cartGetters.getTotalItems(cartData)"
         />
       </template>
       <transition name="sf-fade" mode="out-in">
-        <div v-if="totalItems" key="my-cart" class="my-cart">
+        <div v-if="cartData" key="my-cart" class="my-cart">
           <div class="collected-product-list">
             <transition-group name="sf-fade" tag="div">
               <SfCollectedProduct
-                v-for="product in products"
+                v-for="product in cartData.products"
                 v-e2e="'collected-product'"
                 :key="cartGetters.getItemSku(product)"
                 :image="addBasePath(cartGetters.getItemImage(product))"
                 :title="cartGetters.getItemName(product)"
-                :regular-price="$n(cartGetters.getItemPrice(product).regular, 'currency')"
-                :special-price="cartGetters.getItemPrice(product).special && $n(cartGetters.getItemPrice(product).special, 'currency')"
-                :stock="99999"
+                :regular-price="cartGetters.getItemPrice(product).regular"
+                :special-price="cartGetters.getItemPrice(product).discounted ? cartGetters.getItemPrice(product).special : 0"
                 @click:remove="removeItem({ product: { id: product.id } })"
                 class="collected-product"
               >
                 <template #configuration>
                   <div class="collected-product__properties">
-                    <SfProperty
+                    <!-- <SfProperty
                       v-for="(attribute, key) in cartGetters.getItemAttributes(product, ['color', 'size'])"
                       :key="key"
                       :name="key"
                       :value="attribute"
-                    />
+                    /> -->
                   </div>
                 </template>
                 <template #input>
@@ -76,15 +75,15 @@
       </transition>
       <template #content-bottom>
         <transition name="sf-fade">
-          <div v-if="totalItems">
+          <div v-if="cartData">
             <SfProperty
               name="Subtotal price"
               class="sf-property--full-width sf-property--large my-cart__total-price"
             >
               <template #value>
                 <SfPrice
-                  :regular="$n(totals.subtotal, 'currency')"
-                  :special="(totals.special !== totals.subtotal) ? $n(totals.special, 'currency') : 0"
+                  :regular="cartGetters.getTotals(cartData).displayTotal"
+                  :special="0"
                 />
               </template>
             </SfProperty>
@@ -143,10 +142,9 @@ export default {
   setup() {
     const { isCartSidebarOpen, toggleCartSidebar } = useUiState();
     const { cart, removeItem, updateItemQty, loading } = useCart();
-    const products = computed(() => cartGetters.getItems(cart.value));
+    const cartData = computed(() => cartGetters.getItems(cart.value));
     const totals = computed(() => cartGetters.getTotals(cart.value));
     const totalItems = computed(() => cartGetters.getTotalItems(cart.value));
-
     const updateQuantity = debounce(async ({ product, quantity }) => {
       await updateItemQty({ product, quantity });
     }, 500);
@@ -155,7 +153,7 @@ export default {
       addBasePath,
       updateQuantity,
       loading,
-      products,
+      cartData,
       removeItem,
       isCartSidebarOpen,
       toggleCartSidebar,

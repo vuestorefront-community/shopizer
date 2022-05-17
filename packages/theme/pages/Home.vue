@@ -68,7 +68,7 @@
               :show-add-to-cart-button="product.available || product.canBePurchased || product.visible || product.quantity > 0"
               :link="localePath(`/p/${product.id}/${product.description.friendlyUrl}`)"
               class="carousel__item__product"
-              @click:add-to-cart="addItemToCart({ product, quantity: 1 })"
+              @click:add-to-cart="addItemToCart({ cartItem, product, quantity: 1})"
             />
           </SfCarouselItem>
         </SfCarousel>
@@ -124,7 +124,7 @@ import NewsletterModal from '~/components/NewsletterModal.vue';
 import LazyHydrate from 'vue-lazy-hydration';
 import { useUiState } from '../composables';
 import { addBasePath, onSSR } from '@vue-storefront/core';
-import { useContent, contentGetters, useCart } from '@vue-storefront/shopizer';
+import { useContent, contentGetters, useCart, cartGetters } from '@vue-storefront/shopizer';
 import { computed } from '@nuxtjs/composition-api';
 
 export default {
@@ -149,11 +149,12 @@ export default {
     const { $config } = useContext();
     const { toggleNewsletterModal } = useUiState();
     const { getFeaturedItem, featuredItemData } = useContent();
-    const { addItem: addItemToCart } = useCart();
+    const { addItem: addItemToCart, cart } = useCart();
     onSSR(async () => {
       await getFeaturedItem();
     });
     const products = computed(() => contentGetters.getFeatureItemsData(featuredItemData?.value));
+    const cartItem = computed(() => cartGetters.getItems(cart.value));
     // const products = ref([
     //   {
     //     title: 'Cream Beach Bag',
@@ -295,7 +296,8 @@ export default {
       banners,
       heroes,
       products,
-      addItemToCart
+      addItemToCart,
+      cartItem
     };
   }
 };

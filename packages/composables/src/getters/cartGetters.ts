@@ -1,6 +1,5 @@
 import {
   CartGetters,
-  AgnosticPrice,
   AgnosticTotals,
   AgnosticCoupon,
   AgnosticDiscount,
@@ -8,54 +7,54 @@ import {
 } from '@vue-storefront/core';
 import type { Cart, CartItem } from '@vue-storefront/shopizer-api';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function getItems(cart: Cart): CartItem[] {
-  return [
-    {}
-  ];
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function getItems(cart: any): CartItem[] {
+  return cart || null;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function getItemName(item: CartItem): string {
-  return 'Name';
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function getItemName(item: any): string {
+  return item?.description?.name || '';
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function getItemImage(item: CartItem): string {
-  return 'https://s3-eu-west-1.amazonaws.com/commercetools-maximilian/products/081223_1_large.jpg';
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function getItemImage(item: any): string {
+  return item?.images[0].imageUrl || null;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function getItemPrice(item: CartItem): AgnosticPrice {
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function getItemPrice(item: any): any {
   return {
-    regular: 12,
-    special: 10
+    regular: item?.originalPrice || 0,
+    special: item?.finalPrice || 0,
+    discounted: item?.discounted || false
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function getItemQty(item: CartItem): number {
-  return 1;
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function getItemQty(item: any): number {
+  return item?.quantity || 1;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function getItemAttributes(item: CartItem, filterByAttributeName?: Array<string>): Record<string, AgnosticAttribute | string> {
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function getItemAttributes(): Record<string, AgnosticAttribute | string> {
   return {
     color: 'red'
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function getItemSku(item: CartItem): string {
-  return '';
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function getItemSku(item: any): string {
+  return item?.sku || '';
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function getTotals(cart: Cart): AgnosticTotals {
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function getTotals(cart: any): AgnosticTotals {
   return {
     total: 12,
     subtotal: 12,
-    special: 10
+    special: 10,
+    displayTotal: cart?.displayTotal || 0
   };
 }
 
@@ -64,9 +63,9 @@ function getShippingPrice(cart: Cart): number {
   return 0;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function getTotalItems(cart: Cart): number {
-  return 1;
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function getTotalItems(cart: any): number {
+  return cart?.quantity || 0;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

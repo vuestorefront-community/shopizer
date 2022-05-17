@@ -56,7 +56,6 @@ export default {
     const { load: loadUser } = useUser();
     const { load: loadCart } = useCart();
     const { load: loadWishlist } = useWishlist();
-
     onSSR(async () => {
       await Promise.all([
         loadStores(),

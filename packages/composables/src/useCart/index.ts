@@ -11,15 +11,24 @@ import type {
 
 const params: UseCartFactoryParams<Cart, CartItem, Product> = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  load: async (context: Context, { customQuery }) => {
+  load: async (context: Context, {customQuery}) => {
     console.log('Mocked: useCart.load');
-    return {};
+    if (customQuery === undefined) {
+      if (typeof window !== 'undefined') {
+        console.log(localStorage.getItem('cartId'));
+      }
+    }
+    const cart = await context.$shopizer.api.getCart(customQuery);
+    return cart;
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   addItem: async (context: Context, { currentCart, product, quantity, customQuery }) => {
     console.log('Mocked: useCart.addItem');
-    return {};
+    const response: any = await context.$shopizer.api.addToCart({product, cartId: currentCart, quantity});
+    await params.load(context, {customQuery: response.code});
+    localStorage.setItem('cartId', response.code);
+    return response;
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
