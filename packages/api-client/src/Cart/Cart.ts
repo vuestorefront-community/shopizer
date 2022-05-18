@@ -5,11 +5,11 @@ export async function addToCart(context: Context, {product, cartId, quantity}: a
   const param = { product: product.id, quantity: quantity };
   try {
     if (cartId) {
-      url = new URL(`api/v1/cart/${cartId.code}?store=DEFAULT`, context.config.api.url);
+      url = new URL(`api/v1/cart/${cartId.code}?store=${context.config.store}`, context.config.api.url);
       const { data } = await context.client.put(url.href, param);
       return data;
     } else {
-      url = new URL('api/v1/cart?store=DEFAULT', context.config.api.url);
+      url = new URL(`api/v1/cart?store=${context.config.store}`, context.config.api.url);
       const { data } = await context.client.post(url.href, param);
       return data;
     }
@@ -18,10 +18,21 @@ export async function addToCart(context: Context, {product, cartId, quantity}: a
   }
 }
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export async function getCart(context: Context, cartID: any): Promise<object> {
+export async function getCart(context: Context, cartID: string): Promise<object> {
   try {
     const url = new URL(`api/v1/cart/${cartID}?lang=en`, context.config.api.url);
     const { data } = await context.client.get(url.href);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+}
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export async function deleteFromCart(context: Context, {productId, cartId} : any): Promise<object> {
+  try {
+
+    const url = new URL(`api/v1/cart/${cartId}/product/${productId}?store=${context.config.store}`, context.config.api.url);
+    const { data } = await context.client.delete(url.href);
     return data;
   } catch (error) {
     console.log(error);

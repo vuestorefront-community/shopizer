@@ -60,11 +60,17 @@ export default {
       await Promise.all([
         loadStores(),
         loadUser(),
-        loadCart(),
+        // loadCart(),
         loadWishlist()
       ]);
     });
 
+    if (typeof window !== 'undefined') {
+      console.log(localStorage.getItem('cartId'), '*********');
+      if (localStorage.getItem('cartId')) {
+        loadCart({customQuery: localStorage.getItem('cartId')});
+      }
+    }
     return {
       route
     };

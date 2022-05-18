@@ -19,7 +19,7 @@ function getItemName(item: any): string {
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function getItemImage(item: any): string {
-  return item?.images[0].imageUrl || null;
+  return item.images && item.images.length > 0 ? item?.images[0].imageUrl : '';
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types

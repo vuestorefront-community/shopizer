@@ -12,7 +12,7 @@
           v-if="cartData"
           class="sf-property--large cart-summary desktop-only"
           name="Total items"
-          :value="cartGetters.getTotalItems(cartData)"
+          :value="totalItems"
         />
       </template>
       <transition name="sf-fade" mode="out-in">

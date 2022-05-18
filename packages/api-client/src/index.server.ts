@@ -3,7 +3,7 @@ import type { Setttings, Endpoints } from './types';
 import { getStore } from './Store/Store';
 import { getCategoryHierarchy, getContent } from './Category/Category';
 import { getFeaturedItems, getProductDetails } from './Products/Products';
-import { addToCart, getCart } from './Cart/Cart';
+import { addToCart, getCart, deleteFromCart } from './Cart/Cart';
 import axios from 'axios';
 
 function onCreate(settings) {
@@ -25,7 +25,8 @@ const { createApiClient } = apiClientFactory<Setttings, Endpoints>({
     getFeaturedItems,
     getProductDetails,
     addToCart,
-    getCart
+    getCart,
+    deleteFromCart
   }
 });
 

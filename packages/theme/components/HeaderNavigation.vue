@@ -82,8 +82,8 @@ export default {
     const { getCategoryHierarchy, categoryData, getContent, contentData } = useContent();
 
     onSSR(async () => {
-      await getCategoryHierarchy({defaultStore: 'DEFAULT', currentLanguageCode: 'en'});
-      await getContent({defaultStore: 'DEFAULT', currentLanguageCode: 'en'});
+      await getCategoryHierarchy({currentLanguageCode: 'en'});
+      await getContent({currentLanguageCode: 'en'});
     });
     const categories = computed(() => contentGetters.getCategoryData(categoryData?.value));
     const contents = computed(() => contentGetters.getContentData(contentData?.value));

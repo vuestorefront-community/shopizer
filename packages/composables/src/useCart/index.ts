@@ -13,11 +13,6 @@ const params: UseCartFactoryParams<Cart, CartItem, Product> = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   load: async (context: Context, {customQuery}) => {
     console.log('Mocked: useCart.load');
-    if (customQuery === undefined) {
-      if (typeof window !== 'undefined') {
-        console.log(localStorage.getItem('cartId'));
-      }
-    }
     const cart = await context.$shopizer.api.getCart(customQuery);
     return cart;
   },
@@ -32,9 +27,18 @@ const params: UseCartFactoryParams<Cart, CartItem, Product> = {
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  removeItem: async (context: Context, { currentCart, product, customQuery }) => {
+  removeItem: async (context: Context, { currentCart, product, customQuery }: any) => {
     console.log('Mocked: useCart.removeItem');
-    return {};
+    await context.$shopizer.api.deleteFromCart({productId: product.id, cartId: currentCart.code});
+    const data = await context.$shopizer.api.getCart(currentCart.code);
+    console.log(data);
+    if (data) {
+      return data;
+    } else {
+      localStorage.removeItem('cartId');
+      return '';
+    }
+    // return currentCart;
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
