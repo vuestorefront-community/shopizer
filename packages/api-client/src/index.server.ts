@@ -1,8 +1,8 @@
 import { apiClientFactory } from '@vue-storefront/core';
 import type { Setttings, Endpoints } from './types';
 import { getStore } from './Store/Store';
-import { getCategoryHierarchy, getContent } from './Category/Category';
-import { getFeaturedItems, getProductDetails } from './Products/Products';
+import { getCategoryHierarchy, getContent, getCategoryDetails } from './Category/Category';
+import { getFeaturedItems, getProductDetails, getProductList, getManufacturers, getVariants } from './Products/Products';
 import { addToCart, getCart, deleteFromCart } from './Cart/Cart';
 import axios from 'axios';
 
@@ -26,7 +26,11 @@ const { createApiClient } = apiClientFactory<Setttings, Endpoints>({
     getProductDetails,
     addToCart,
     getCart,
-    deleteFromCart
+    deleteFromCart,
+    getProductList,
+    getManufacturers,
+    getVariants,
+    getCategoryDetails
   }
 });
 

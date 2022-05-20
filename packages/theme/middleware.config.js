@@ -5,7 +5,7 @@ module.exports = {
       configuration: {
         store: "DEFAULT",
         api: {
-          url: 'https://rest-api.shopizer.com/' // URL of your e-commerce platform
+          url: 'http://aws-demo.shopizer.com:8080' // URL of your e-commerce platform
         }
       }
     }

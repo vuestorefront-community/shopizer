@@ -216,7 +216,7 @@ export default {
     const { reviews: productReviews, search: searchReviews } = useReview('productReviews');
     const id = computed(() => route.value.params.id);
     onSSR(async () => {
-      await search({ id: id.value, defaultStore: 'DEFAULT', currentLanguageCode: 'en' });
+      await search({ id: id.value, currentLanguageCode: 'en' });
       await searchReviews({ productId: id.value });
     });
 

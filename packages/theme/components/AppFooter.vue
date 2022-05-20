@@ -86,7 +86,6 @@ export default {
     const { response } = useStore();
     const marketLogo = computed(() => marketGetters.getStoreLogo(response.value));
     const merchant = computed(() => marketGetters.getStoreData(response.value));
-    console.log(merchant);
     return {
       addBasePath,
       marketLogo,

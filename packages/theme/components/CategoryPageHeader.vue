@@ -1,6 +1,6 @@
 <template>
   <div class="navbar__main">
-    <LazyHydrate on-interaction>
+    <!-- <LazyHydrate on-interaction>
       <SfButton
         class="sf-button--text navbar__filters-button"
         :aria-label="$t('Filters')"
@@ -14,9 +14,9 @@
         />
         {{ $t('Filters') }}
       </SfButton>
-    </LazyHydrate>
+    </LazyHydrate> -->
 
-    <div class="navbar__sort desktop-only">
+    <!-- <div class="navbar__sort desktop-only">
       <span class="navbar__label">{{ $t('Sort by') }}:</span>
       <LazyHydrate on-interaction>
         <SfSelect
@@ -36,7 +36,7 @@
           >
         </SfSelect>
       </LazyHydrate>
-    </div>
+    </div> -->
 
     <div class="navbar__counter">
       <span class="navbar__label desktop-only">{{ $t('Products found') }}: </span>

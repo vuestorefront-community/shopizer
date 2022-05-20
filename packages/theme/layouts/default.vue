@@ -66,7 +66,6 @@ export default {
     });
 
     if (typeof window !== 'undefined') {
-      console.log(localStorage.getItem('cartId'), '*********');
       if (localStorage.getItem('cartId')) {
         loadCart({customQuery: localStorage.getItem('cartId')});
       }

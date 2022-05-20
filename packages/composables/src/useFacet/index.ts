@@ -1,7 +1,6 @@
 import {
   Context,
-  useFacetFactory,
-  FacetSearchResult
+  useFacetFactory
 } from '@vue-storefront/core';
 import type {
   UseFacetSearchParams as SearchParams
@@ -9,9 +8,10 @@ import type {
 
 const factoryParams = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  search: async (context: Context, params: FacetSearchResult<SearchParams>) => {
+  search: async (context: Context, params) => {
     console.log('Mocked: useFacet.search');
-    return {};
+    const result: any = await context.$shopizer.api.getProductList(params.input);
+    return result;
   }
 };
 

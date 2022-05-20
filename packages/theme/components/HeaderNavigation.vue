@@ -8,7 +8,7 @@
       class="nav-item"
       v-e2e="`app-header-url_${category}`"
       :label="category.description.name"
-      :link="localePath(`/c/${category.description.friendlyUrl}`)"
+      :link="localePath(`/c/${category.id}/${category.description.friendlyUrl}`)"
       v-if="category.visible"
     />
     <SfHeaderNavigationItem
@@ -34,7 +34,7 @@
         <SfMenuItem
           :label="category.description.name"
           class="sf-header-navigation-item__menu-item"
-          :link="localePath(`/category/${category.description.friendlyUrl}`)"
+          :link="localePath(`/c/${category.id}/${category.description.friendlyUrl}`)"
           @click="toggleMobileMenu"
         />
       </template>
@@ -50,7 +50,7 @@
         <SfMenuItem
           :label="content.description.name"
           class="sf-header-navigation-item__menu-item"
-          :link="localePath(`/category/${content.description.friendlyUrl}`)"
+          :link="localePath(`/content/${content.description.friendlyUrl}`)"
           @click="toggleMobileMenu"
         />
       </template>

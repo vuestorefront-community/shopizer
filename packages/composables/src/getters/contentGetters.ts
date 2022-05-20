@@ -15,9 +15,25 @@ function getFeatureItemsData (featureItems: any): any[] {
   // console.log(contents);
   return featureItems?.products || [];
 }
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function getManufactures (items: any): any {
+  return items ? items : [];
+}
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function getvariants (items: any): any {
+  return items ? items : [];
+}
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function getCategoryDetail (items: any): any {
+  console.log(items);
+  return items ? items?.children : [];
+}
 
 export const contentGetters = {
   getCategoryData,
   getContentData,
-  getFeatureItemsData
+  getFeatureItemsData,
+  getManufactures,
+  getvariants,
+  getCategoryDetail
 };

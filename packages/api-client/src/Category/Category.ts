@@ -11,3 +11,10 @@ export async function getContent(context: Context, params: any): Promise<object>
   const { data } = await context.client.get(url.href);
   return data;
 }
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export async function getCategoryDetails(context: Context, params: any): Promise<object> {
+  const url = new URL(`api/v1/category/${params.categoryid}?store=${context.config.store}&lang=${params.currentLanguageCode}`, context.config.api.url);
+  console.log(url);
+  const { data } = await context.client.get(url.href);
+  return data;
+}

@@ -2,7 +2,12 @@
   <div id="category">
     <SfBreadcrumbs
       class="breadcrumbs desktop-only"
-      :breadcrumbs="breadcrumbs"
+      :breadcrumbs="[{
+          text: 'Home',
+          route: {
+            link: '/'
+          }
+        }]"
     />
     <div class="navbar section">
       <div class="navbar__aside desktop-only">
@@ -23,50 +28,50 @@
           :class="{ 'loading--categories': loading }"
           :loading="loading">
             <SfAccordion
-              v-e2e="'categories-accordion'"
-              :open="activeCategory"
-              :show-chevron="true"
-            >
-              <SfAccordionItem
-                v-for="(cat, i) in categoryTree && categoryTree.items"
-                :key="i"
-                :header="cat.label"
-              >
+              v-e2e="'categories-accordion'" :show-chevron="true">
+              <SfAccordionItem header="Categories" key="a" v-if="category.length > 0">
+                <template>
+                  <SfList class="list" >
+                    <SfListItem v-for="(category, j) in category" :key="j" class="list__item" >
+                      <!-- <nuxt-link :to="localePath(`/c/${category.id}/${category.description.friendlyUrl}`)" > -->
+                        <SfMenuItem :label="category.description.name">
+                        </SfMenuItem>
+                      <!-- </nuxt-link> -->
+                    </SfListItem>
+                  </SfList>
+                </template>
+              </SfAccordionItem>
+              <SfAccordionItem header="Styles" key="b" v-if="manufacture.length > 0">
                 <template>
                   <SfList class="list">
-                    <SfListItem class="list__item">
-                      <SfMenuItem
-                        :count="cat.count || ''"
-                        :label="cat.label"
-                      >
-                        <template #label>
-                          <nuxt-link
-                            :to="localePath(th.getCatLink(cat))"
-                            :class="cat.isCurrent ? 'sidebar--cat-selected' : ''"
-                          >
-                            All
-                          </nuxt-link>
-                        </template>
-                      </SfMenuItem>
+                    <SfListItem v-for="(subCat, j) in manufacture" :key="j" class="list__item" >
+                      <template>
+                        <SfCheckbox
+                          name="manufacture"
+                          :label="subCat.description.name"
+                          @change="onChangeManufacturer(subCat.id)"
+                        />
+                      </template>
                     </SfListItem>
+                  </SfList>
+                </template>
+              </SfAccordionItem>
+              <SfAccordionItem
+                  v-for="(accordion, i) in variants"
+                  :key="i+2"
+                  :header="accordion.name">
+                <template>
+                  <SfList class="list">
                     <SfListItem
-                      class="list__item"
-                      v-for="(subCat, j) in cat.items"
+                      v-for="(item, j) in accordion.options"
                       :key="j"
-                    >
-                      <SfMenuItem
-                        :count="subCat.count || ''"
-                        :label="subCat.label"
-                      >
-                        <template #label="{ label }">
-                          <nuxt-link
-                            :to="localePath(th.getCatLink(subCat))"
-                            :class="subCat.isCurrent ? 'sidebar--cat-selected' : ''"
-                          >
-                            {{ label }}
-                          </nuxt-link>
-                        </template>
-                      </SfMenuItem>
+                      class="list__item">
+                      <template>
+                        <SfCheckbox
+                          :name="item.code"
+                          :label="item.name"
+                        />
+                      </template>
                     </SfListItem>
                   </SfList>
                 </template>
@@ -91,16 +96,15 @@
               :style="{ '--index': i }"
               :title="productGetters.getName(product)"
               :image="addBasePath(productGetters.getCoverImage(product))"
-              :regular-price="$n(productGetters.getPrice(product).regular, 'currency')"
-              :special-price="productGetters.getPrice(product).special && $n(productGetters.getPrice(product).special, 'currency')"
+              :regular-price="productGetters.getPrice(product).regular"
+              :special-price="productGetters.getPrice(product).discounted ? productGetters.getPrice(product).special : ''"
               :max-rating="5"
               :score-rating="productGetters.getAverageRating(product)"
               :show-add-to-cart-button="true"
-              :is-in-wishlist="isInWishlist({ product })"
               :is-added-to-cart="isInCart({ product })"
+              wishlistIcon=""
               :link="localePath(`/p/${productGetters.getId(product)}/${productGetters.getSlug(product)}`)"
               class="products__product-card"
-              @click:wishlist="!isInWishlist({ product }) ? addItemToWishlist({ product }) : removeProductFromWishlist(product)"
               @click:add-to-cart="addToCart({ product, quantity: 1 })"
             />
           </transition-group>
@@ -120,15 +124,14 @@
               :title="productGetters.getName(product)"
               :description="productGetters.getDescription(product)"
               :image="addBasePath(productGetters.getCoverImage(product))"
-              :regular-price="$n(productGetters.getPrice(product).regular, 'currency')"
-              :special-price="productGetters.getPrice(product).special && $n(productGetters.getPrice(product).special, 'currency')"
+              :regular-price="productGetters.getPrice(product).regular"
+              :special-price="productGetters.getPrice(product).discounted ? productGetters.getPrice(product).special : ''"
               :max-rating="5"
-              :score-rating="3"
+              :score-rating="productGetters.getAverageRating(product)"
               :qty="1"
-              :is-in-wishlist="isInWishlist({ product })"
+              wishlistIcon=""
               :link="localePath(`/p/${productGetters.getId(product)}/${productGetters.getSlug(product)}`)"
               @input="productsQuantity[product._id] = $event"
-              @click:wishlist="!isInWishlist({ product }) ? addItemToWishlist({ product }) : removeProductFromWishlist(product)"
               @click:add-to-cart="addToCart({ product, quantity: Number(productsQuantity[product._id]) })"
             >
               <template #configuration>
@@ -208,10 +211,11 @@ import {
   SfBreadcrumbs,
   SfLoader,
   SfColor,
-  SfProperty
+  SfProperty,
+  SfCheckbox
 } from '@storefront-ui/vue';
-import { computed, ref } from '@nuxtjs/composition-api';
-import { useCart, useWishlist, productGetters, useFacet, facetGetters, wishlistGetters } from '@vue-storefront/shopizer';
+import { computed, ref, useRoute } from '@nuxtjs/composition-api';
+import { useCart, productGetters, useFacet, facetGetters, useContent, contentGetters } from '@vue-storefront/shopizer';
 import { useUiHelpers, useUiState } from '~/composables';
 import { onSSR } from '@vue-storefront/core';
 import LazyHydrate from 'vue-lazy-hydration';
@@ -221,35 +225,32 @@ import { addBasePath } from '@vue-storefront/core';
 // TODO(addToCart qty, horizontal): https://github.com/vuestorefront/storefront-ui/issues/1606
 export default {
   transition: 'fade',
-  setup(props, context) {
+  setup() {
+    const route = useRoute();
     const th = useUiHelpers();
     const uiState = useUiState();
     const { addItem: addItemToCart, isInCart } = useCart();
-    const { result, search, loading, error } = useFacet();
-    const { addItem: addItemToWishlist, isInWishlist, removeItem: removeItemFromWishlist, wishlist } = useWishlist();
+    const { result, search, loading } = useFacet();
+    const { getManufacturers, manufactureData, getVariants, variantsData, getCategoryDetails, categoryDetails } = useContent();
+    // const { addItem: addItemToWishlist, isInWishlist, removeItem: removeItemFromWishlist, wishlist } = useWishlist();
+    const id = computed(() => route.value.params.slug_1);
 
-    const productsQuantity = ref({});
-    const products = computed(() => facetGetters.getProducts(result.value));
-    const categoryTree = computed(() => facetGetters.getCategoryTree(result.value));
-    const breadcrumbs = computed(() => facetGetters.getBreadcrumbs(result.value));
-    const pagination = computed(() => facetGetters.getPagination(result.value));
-    const activeCategory = computed(() => {
-      const items = categoryTree.value.items;
-
-      if (!items || !items.length) {
-        return '';
-      }
-
-      const category = items.find(({ isCurrent, items }) => isCurrent || items.find(({ isCurrent }) => isCurrent));
-
-      return category?.label || items[0].label;
+    onSSR(async () => {
+      await search({ categoryid: id.value, currentLanguageCode: 'en' });
+      await getCategoryDetails({ categoryid: id.value, currentLanguageCode: 'en' });
+      await getManufacturers({ categoryid: id.value, currentLanguageCode: 'en' });
+      await getVariants({ categoryid: id.value, currentLanguageCode: 'en' });
     });
 
-    const removeProductFromWishlist = (productItem) => {
-      const productsInWhishlist = computed(() => wishlistGetters.getItems(wishlist.value));
-      const product = productsInWhishlist.value.find(wishlistProduct => wishlistProduct.variant.sku === productItem.sku);
-      removeItemFromWishlist({ product });
-    };
+    const productsQuantity = ref({});
+    const products = computed(() => facetGetters.getProducts(result.value.data));
+    const manufacture = computed(() => contentGetters.getManufactures(manufactureData.value));
+
+    const variants = computed(() => contentGetters.getvariants(variantsData.value));
+
+    const category = computed(() => contentGetters.getCategoryDetail(categoryDetails.value));
+
+    const pagination = computed(() => facetGetters.getPagination(result.value));
 
     const addToCart = ({ product, quantity }) => {
       const { id, sku } = product;
@@ -258,29 +259,24 @@ export default {
         quantity
       });
     };
-
-    onSSR(async () => {
-      await search(th.getFacetsFromURL());
-      if (error?.value?.search) context.root.$nuxt.error({ statusCode: 404 });
-    });
-
+    const onChangeManufacturer = () => {
+    };
     return {
       ...uiState,
       th,
       products,
-      categoryTree,
       loading,
       productGetters,
       pagination,
-      activeCategory,
-      breadcrumbs,
-      addItemToWishlist,
-      removeProductFromWishlist,
-      isInWishlist,
+      // activeCategory,
       addToCart,
       isInCart,
       productsQuantity,
-      addBasePath
+      addBasePath,
+      manufacture,
+      onChangeManufacturer,
+      variants,
+      category
     };
   },
   components: {
@@ -301,7 +297,8 @@ export default {
     SfColor,
     SfHeading,
     SfProperty,
-    LazyHydrate
+    LazyHydrate,
+    SfCheckbox
   }
 };
 </script>

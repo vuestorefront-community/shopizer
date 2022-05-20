@@ -13,8 +13,8 @@ function getName(product: any): string {
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-function getSlug(): string {
-  return 'slug';
+function getSlug(product: any): string {
+  return product?.description.friendlyUrl || '/';
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -32,8 +32,8 @@ function getGallery(product: any): AgnosticMediaGalleryItem[] {
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-function getCoverImage(): string {
-  return 'https://s3-eu-west-1.amazonaws.com/commercetools-maximilian/products/081223_1_large.jpg';
+function getCoverImage(products: any): string {
+  return products.images && products.images.length > 0 ? products?.images[0].imageUrl : '';
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -70,8 +70,8 @@ function getCategoryIds(): string[] {
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-function getId(): string {
-  return '1';
+function getId(product: any): string {
+  return product?.id || 0;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -84,9 +84,9 @@ function getTotalReviews(product: Product): number {
   return 0;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function getAverageRating(product: Product): number {
-  return 0;
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function getAverageRating(product: any): number {
+  return product?.rating || 0;
 }
 
 export const productGetters: ProductGetters<Product, ProductFilter> = {
