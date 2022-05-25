@@ -16,7 +16,7 @@
           <a :href="switchLocalePath(lang.code)">
             <SfCharacteristic class="language">
               <template #title>
-                <span>{{ lang.label }}</span>
+                <span>{{ $t(lang.code) }}</span>
               </template>
               <template #icon>
                 <SfImage :src="addBasePath(`/icons/langs/${lang.code}.webp`)" width="20" alt="Flag" class="language__flag" />
@@ -40,6 +40,7 @@ import {
 } from '@storefront-ui/vue';
 import { ref, computed } from '@nuxtjs/composition-api';
 import { addBasePath } from '@vue-storefront/core';
+import { useStore, marketGetters } from '@vue-storefront/shopizer';
 export default {
   components: {
     SfImage,
@@ -50,9 +51,12 @@ export default {
     SfCharacteristic
   },
   setup(props, context) {
-    const { locales, locale } = context.root.$i18n;
+    const { locale } = context.root.$i18n;
+    const { response } = useStore();
     const isLangModalOpen = ref(false);
-    const availableLocales = computed(() => locales.filter(i => i.code !== locale));
+    // const availableLocales = computed(() => locales.filter(i => i.code !== locale));
+    // console.log(availableLocales);
+    const availableLocales = computed(() => marketGetters.getLanguages(response.value));
     return {
       availableLocales,
       locale,

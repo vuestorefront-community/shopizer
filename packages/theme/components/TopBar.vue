@@ -1,12 +1,12 @@
 <template>
   <SfTopBar class="topbar">
     <template #left>
-      <SfButton class="sf-button--text">{{ $t('Help & FAQs') }}</SfButton>
+      <SfButton class="sf-button--text">Call Us : {{phoneNumber}}</SfButton>
     </template>
-    <template #center>
+    <!-- <template #center>
       <p>{{ $t('Download') }}</p>
       <SfButton class="topbar__button sf-button--text">{{ $t('Find out more') }}</SfButton>
-    </template>
+    </template> -->
     <template #right>
       <LocaleSelector />
     </template>
@@ -16,12 +16,22 @@
 <script>
 import { SfButton, SfTopBar } from '@storefront-ui/vue';
 import LocaleSelector from './LocaleSelector';
+import { useStore, marketGetters } from '@vue-storefront/shopizer';
+import { computed } from '@nuxtjs/composition-api';
 
 export default {
   components: {
     SfTopBar,
     SfButton,
     LocaleSelector
+  },
+  setup() {
+    const { response } = useStore();
+    const phoneNumber = computed(() => marketGetters.getPhoneNumber(response.value));
+
+    return {
+      phoneNumber
+    };
   }
 };
 

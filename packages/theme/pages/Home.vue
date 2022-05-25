@@ -65,7 +65,7 @@
               :max-rating="5"
               :score-rating="product.rating"
               wishlistIcon=""
-              :show-add-to-cart-button="product.available || product.canBePurchased || product.visible || product.quantity > 0"
+              :addToCartDisabled="product.available || product.canBePurchased || product.visible || product.quantity > 0"
               :link="localePath(`/p/${product.id}/${product.description.friendlyUrl}`)"
               class="carousel__item__product"
               @click:add-to-cart="addItemToCart({ cartItem, product, quantity: 1})"

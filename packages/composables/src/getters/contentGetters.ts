@@ -25,7 +25,6 @@ function getvariants (items: any): any {
 }
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function getCategoryDetail (items: any): any {
-  console.log(items);
   return items ? items?.children : [];
 }
 

@@ -20,7 +20,18 @@ const params: UseCartFactoryParams<Cart, CartItem, Product> = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   addItem: async (context: Context, { currentCart, product, quantity, customQuery }) => {
     console.log('Mocked: useCart.addItem');
-    const response: any = await context.$shopizer.api.addToCart({product, cartId: currentCart, quantity});
+    let qty = 0;
+    if (currentCart) {
+      const item = currentCart?.products.find(cart => cart.id === product?.id);
+      if (item === undefined) {
+        qty = quantity;
+      } else {
+        qty = item.quantity + quantity;
+      }
+    } else {
+      qty = quantity;
+    }
+    const response: any = await context.$shopizer.api.addToCart({product, cartId: currentCart, qty});
     await params.load(context, {customQuery: response.code});
     localStorage.setItem('cartId', response.code);
     return response;
@@ -31,7 +42,6 @@ const params: UseCartFactoryParams<Cart, CartItem, Product> = {
     console.log('Mocked: useCart.removeItem');
     await context.$shopizer.api.deleteFromCart({productId: product.id, cartId: currentCart.code});
     const data = await context.$shopizer.api.getCart(currentCart.code);
-    console.log(data);
     if (data) {
       return data;
     } else {

@@ -24,19 +24,16 @@
     <div class="main section">
       <div class="sidebar desktop-only">
         <LazyHydrate when-idle>
-          <SfLoader
-          :class="{ 'loading--categories': loading }"
-          :loading="loading">
             <SfAccordion
               v-e2e="'categories-accordion'" :show-chevron="true">
               <SfAccordionItem header="Categories" key="a" v-if="category.length > 0">
                 <template>
                   <SfList class="list" >
                     <SfListItem v-for="(category, j) in category" :key="j" class="list__item" >
-                      <!-- <nuxt-link :to="localePath(`/c/${category.id}/${category.description.friendlyUrl}`)" > -->
+                      <nuxt-link :to="localePath(`/c/${category.id}/${category.description.friendlyUrl}`)" >
                         <SfMenuItem :label="category.description.name">
                         </SfMenuItem>
-                      <!-- </nuxt-link> -->
+                      </nuxt-link>
                     </SfListItem>
                   </SfList>
                 </template>
@@ -46,11 +43,17 @@
                   <SfList class="list">
                     <SfListItem v-for="(subCat, j) in manufacture" :key="j" class="list__item" >
                       <template>
-                        <SfCheckbox
-                          name="manufacture"
+                        <input
+                            type="checkbox"
+                            name="manufacture"
+                            :value="subCat.id"
+                            @change="getSortParams('MANUFACTURE', subCat.id)"
+                            >
+                        <span>{{ subCat.description.name }}</span>
+                        <!-- <SfCheckbox
+                          :name="subCat.code"
                           :label="subCat.description.name"
-                          @change="onChangeManufacturer(subCat.id)"
-                        />
+                        /> -->
                       </template>
                     </SfListItem>
                   </SfList>
@@ -67,17 +70,23 @@
                       :key="j"
                       class="list__item">
                       <template>
-                        <SfCheckbox
+                        <input
+                            type="checkbox"
+                            :name="accordion.name"
+                            :value="item.id"
+                            @change="getSortParams(accordion.name, item.id)"
+                            >
+                        <span>{{ item.name }}</span>
+                        <!-- <SfCheckbox
                           :name="item.code"
                           :label="item.name"
-                        />
+                        /> -->
                       </template>
                     </SfListItem>
                   </SfList>
                 </template>
               </SfAccordionItem>
             </SfAccordion>
-          </SfLoader>
         </LazyHydrate>
       </div>
       <SfLoader :class="{ loading }" :loading="loading">
@@ -100,12 +109,10 @@
               :special-price="productGetters.getPrice(product).discounted ? productGetters.getPrice(product).special : ''"
               :max-rating="5"
               :score-rating="productGetters.getAverageRating(product)"
-              :show-add-to-cart-button="true"
-              :is-added-to-cart="isInCart({ product })"
               wishlistIcon=""
               :link="localePath(`/p/${productGetters.getId(product)}/${productGetters.getSlug(product)}`)"
               class="products__product-card"
-              @click:add-to-cart="addToCart({ product, quantity: 1 })"
+              @click:add-to-cart="addToCart({ cartItem, product, quantity: 1 })"
             />
           </transition-group>
           <transition-group
@@ -128,13 +135,13 @@
               :special-price="productGetters.getPrice(product).discounted ? productGetters.getPrice(product).special : ''"
               :max-rating="5"
               :score-rating="productGetters.getAverageRating(product)"
-              :qty="1"
+              :addToCartDisabled="product.available || product.canBePurchased || product.visible || product.quantity > 0"
               wishlistIcon=""
               :link="localePath(`/p/${productGetters.getId(product)}/${productGetters.getSlug(product)}`)"
               @input="productsQuantity[product._id] = $event"
-              @click:add-to-cart="addToCart({ product, quantity: Number(productsQuantity[product._id]) })"
+              @click:add-to-cart="addToCart({ cartItem, product, quantity: Number(productsQuantity[product._id]) })"
             >
-              <template #configuration>
+              <!-- <template #configuration>
                 <SfProperty
                   class="desktop-only"
                   name="Size"
@@ -142,8 +149,8 @@
                   style="margin: 0 0 1rem 0;"
                 />
                 <SfProperty class="desktop-only" name="Color" value="white" />
-              </template>
-              <template #actions>
+              </template> -->
+              <!-- <template #actions>
                 <SfButton
                   class="sf-button--text desktop-only"
                   style="margin: 0 0 1rem auto; display: block;"
@@ -151,7 +158,7 @@
                 >
                   {{ $t('Save for later') }}
                 </SfButton>
-              </template>
+              </template> -->
             </SfProductCardHorizontal>
           </transition-group>
 
@@ -215,7 +222,7 @@ import {
   SfCheckbox
 } from '@storefront-ui/vue';
 import { computed, ref, useRoute } from '@nuxtjs/composition-api';
-import { useCart, productGetters, useFacet, facetGetters, useContent, contentGetters } from '@vue-storefront/shopizer';
+import { useCart, productGetters, useFacet, facetGetters, useContent, contentGetters, cartGetters } from '@vue-storefront/shopizer';
 import { useUiHelpers, useUiState } from '~/composables';
 import { onSSR } from '@vue-storefront/core';
 import LazyHydrate from 'vue-lazy-hydration';
@@ -229,17 +236,25 @@ export default {
     const route = useRoute();
     const th = useUiHelpers();
     const uiState = useUiState();
-    const { addItem: addItemToCart, isInCart } = useCart();
+    const { addItem: addItemToCart, cart } = useCart();
     const { result, search, loading } = useFacet();
     const { getManufacturers, manufactureData, getVariants, variantsData, getCategoryDetails, categoryDetails } = useContent();
-    // const { addItem: addItemToWishlist, isInWishlist, removeItem: removeItemFromWishlist, wishlist } = useWishlist();
-    const id = computed(() => route.value.params.slug_1);
 
+    const id = computed(() => route.value.params.slug_1);
+    const cartItem = computed(() => cartGetters.getItems(cart.value));
+    let selectedOption = [];
+    let selectedManufature = [];
     onSSR(async () => {
-      await search({ categoryid: id.value, currentLanguageCode: 'en' });
-      await getCategoryDetails({ categoryid: id.value, currentLanguageCode: 'en' });
-      await getManufacturers({ categoryid: id.value, currentLanguageCode: 'en' });
-      await getVariants({ categoryid: id.value, currentLanguageCode: 'en' });
+      await Promise.all([
+        search({ categoryid: id.value, currentLanguageCode: 'en', selectedManufature, selectedOption}),
+        getCategoryDetails({ categoryid: id.value, currentLanguageCode: 'en' }),
+        getManufacturers({ categoryid: id.value, currentLanguageCode: 'en' }),
+        getVariants({ categoryid: id.value, currentLanguageCode: 'en' })
+      ]);
+      // await search({ categoryid: id.value, currentLanguageCode: 'en' });
+      // await getCategoryDetails({ categoryid: id.value, currentLanguageCode: 'en' });
+      // await getManufacturers({ categoryid: id.value, currentLanguageCode: 'en' });
+      // await getVariants({ categoryid: id.value, currentLanguageCode: 'en' });
     });
 
     const productsQuantity = ref({});
@@ -259,7 +274,30 @@ export default {
         quantity
       });
     };
-    const onChangeManufacturer = () => {
+    const getSortParams = async(sortType, sortValue) => {
+      // console.log(sortType)
+      const tempSelectedOption = selectedOption;
+      const tempSelectedManufature = selectedManufature;
+      if (sortType === 'SIZE' || sortType === 'COLOR') {
+        const index = selectedOption.findIndex(a => a === sortValue);
+        // console.log(index)
+        if (index === -1) {
+          tempSelectedOption.push(sortValue);
+        } else {
+          tempSelectedOption.splice(index, 1);
+        }
+        selectedOption = tempSelectedOption;
+      } else if (sortType === 'MANUFACTURE') {
+        const index = selectedManufature.findIndex(a => a === sortValue);
+        // console.log(index)
+        if (index === -1) {
+          tempSelectedManufature.push(sortValue);
+        } else {
+          tempSelectedManufature.splice(index, 1);
+        }
+        selectedManufature = tempSelectedManufature;
+      }
+      await search({ categoryid: id.value, currentLanguageCode: 'en', selectedManufature, selectedOption });
     };
     return {
       ...uiState,
@@ -270,13 +308,14 @@ export default {
       pagination,
       // activeCategory,
       addToCart,
-      isInCart,
       productsQuantity,
       addBasePath,
       manufacture,
-      onChangeManufacturer,
+      getSortParams,
       variants,
-      category
+      category,
+      selectedOption,
+      cartItem
     };
   },
   components: {

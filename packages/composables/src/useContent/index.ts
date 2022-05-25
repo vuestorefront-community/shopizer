@@ -48,7 +48,6 @@ export const useContent = (): any => {
   const getCategoryDetails = async (params: any) => {
     console.log('Mocked: useFacet.categorydetails');
     const details: any = await context.$shopizer.api.getCategoryDetails(params);
-    console.log(details);
     categoryDetails.value = details;
     return details;
   };

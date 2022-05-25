@@ -8,8 +8,18 @@ function getStoreLogo (store: any): string {
 function getStoreData (store: any): string {
   return store || '';
 }
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function getPhoneNumber (store: any): string {
+  return store.phone || '-';
+}
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function getLanguages (store: any): string {
+  return store.supportedLanguages || [];
+}
 
 export const marketGetters = {
   getStoreLogo,
-  getStoreData
+  getStoreData,
+  getPhoneNumber,
+  getLanguages
 };
