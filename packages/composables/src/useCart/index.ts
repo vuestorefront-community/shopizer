@@ -18,7 +18,7 @@ const params: UseCartFactoryParams<Cart, CartItem, Product> = {
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  addItem: async (context: Context, { currentCart, product, quantity, customQuery }) => {
+  addItem: async (context: Context, { currentCart, product, quantity, customQuery }: any) => {
     console.log('Mocked: useCart.addItem');
     let qty = 0;
     if (currentCart) {
@@ -53,7 +53,8 @@ const params: UseCartFactoryParams<Cart, CartItem, Product> = {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   updateItemQty: async (context: Context, { currentCart, product, quantity, customQuery }) => {
-    const response: any = await context.$shopizer.api.addToCart({product, cartId: currentCart, quantity});
+    const qty = quantity;
+    const response: any = await context.$shopizer.api.addToCart({product, cartId: currentCart, qty});
     console.log('Mocked: useCart.updateItemQty');
     return response;
   },

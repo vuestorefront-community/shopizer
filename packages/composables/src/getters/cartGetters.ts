@@ -1,7 +1,6 @@
 import {
   CartGetters,
   AgnosticTotals,
-  AgnosticCoupon,
   AgnosticDiscount,
   AgnosticAttribute
 } from '@vue-storefront/core';
@@ -68,14 +67,17 @@ function getTotalItems(cart: any): number {
   return cart?.quantity || 0;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function getFormattedPrice(price: number): string {
-  return '';
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function getFormattedPrice(cart: any): any {
+  return {
+    displaySubTotal: cart?.displaySubTotal || 0,
+    displayTotal: cart?.displayTotal || 0
+  };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function getCoupons(cart: Cart): AgnosticCoupon[] {
-  return [];
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function getCoupons(cart: any): any {
+  return cart?.promoCode || '';
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

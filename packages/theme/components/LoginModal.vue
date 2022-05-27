@@ -294,15 +294,14 @@ export default {
 
     const handleRegister = async () => handleForm(register)();
 
-    const handleLogin = async () => handleForm(login)();
+    // const handleLogin = async () => handleForm(login)();
+    const handleLogin = async () => {
+      const param = { username: form.value.username, password: form.value.password };
+      await login(param);
+    };
 
     const handleForgotten = async () => {
-      userEmail.value = form.value.username;
-      await request({ email: userEmail.value });
-
-      if (!forgotPasswordError.value.request) {
-        setCurrentScreen(SCREEN_THANK_YOU);
-      }
+      await request({ username: form.value.username });
     };
 
     return {

@@ -51,7 +51,10 @@
                   </div>
                 </template>
                 <!-- @TODO: remove if https://github.com/vuestorefront/storefront-ui/issues/2022 is done -->
-                <template #more-actions>{{  }}</template>
+                 <template #actions>
+                  <div class="actions desktop-only">
+                  </div>
+                </template>
               </SfCollectedProduct>
             </transition-group>
           </div>
@@ -87,6 +90,14 @@
                 />
               </template>
             </SfProperty>
+            <nuxt-link :to="localePath({ name: 'Cart' })">
+              <SfButton
+                class="sf-button--full-width color-secondary view-cart"
+                @click="toggleCartSidebar"
+              >
+                {{ $t('View Cart') }}
+              </SfButton>
+            </nuxt-link>
             <nuxt-link :to="localePath({ name: 'shipping' })">
               <SfButton
                 class="sf-button--full-width color-secondary"
@@ -178,6 +189,9 @@ export default {
 }
 .cart-summary {
   margin-top: var(--spacer-xl);
+}
+.view-cart{
+  margin-bottom: 20px;
 }
 .my-cart {
   flex: 1;
