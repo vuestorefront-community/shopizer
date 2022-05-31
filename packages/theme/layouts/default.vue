@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="app">
     <LazyHydrate when-visible>
       <TopBar class="desktop-only" />
     </LazyHydrate>
@@ -33,7 +33,7 @@ import LazyHydrate from 'vue-lazy-hydration';
 import Notification from '~/components/Notification';
 import { onSSR } from '@vue-storefront/core';
 import { useRoute } from '@nuxtjs/composition-api';
-import { useCart, useStore, useUser, useWishlist } from '@vue-storefront/shopizer';
+import { useCart, useStore, useWishlist } from '@vue-storefront/shopizer';
 
 export default {
   name: 'DefaultLayout',
@@ -53,13 +53,13 @@ export default {
   setup() {
     const route = useRoute();
     const { load: loadStores } = useStore();
-    const { load: loadUser } = useUser();
+    // const { load: loadUser } = useUser();
     const { load: loadCart } = useCart();
     const { load: loadWishlist } = useWishlist();
     onSSR(async () => {
       await Promise.all([
         loadStores(),
-        loadUser(),
+        // loadUser(),
         // loadCart(),
         loadWishlist()
       ]);
@@ -79,7 +79,10 @@ export default {
 
 <style lang="scss">
 @import "~@storefront-ui/vue/styles";
-
+#app{
+  --c-primary: #0284fe;
+  --c-primary-variant: #709ec9;
+}
 #layout {
   box-sizing: border-box;
   @include for-desktop {

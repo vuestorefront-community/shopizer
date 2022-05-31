@@ -13,12 +13,13 @@ const params: UseUserFactoryParams<User, UpdateParams, RegisterParams> = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   load: async (context: Context) => {
     console.log('Mocked: useUser.load');
-    return {};
+    return 'jaimin';
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   logOut: async (context: Context) => {
     console.log('Mocked: useUser.logOut');
+    localStorage.removeItem('token');
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -28,16 +29,30 @@ const params: UseUserFactoryParams<User, UpdateParams, RegisterParams> = {
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  register: async (context: Context, { email, password, firstName, lastName }) => {
+  register: async (context: Context, params: any) => {
     console.log('Mocked: useUser.register');
-    return {};
+    delete params.customQuery;
+    const data: any = await context.$shopizer.api.register(params);
+    // console.log(data)
+    if (data.code === 200) {
+      localStorage.setItem('token', data.data.token);
+    }
+    throw {
+      data
+    };
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  logIn: async (context: Context, { username, password }) => {
-    console.log('Mocked: useUser.logIn');
-    const userData: any = await context.$shopizer.api.login({ username, password });
-    return userData;
+  logIn: async (context: Context, { username, password }: any) => {
+    console.log(password, 'Mocked: useUser.logIn', username);
+    const loginData: any = await context.$shopizer.api.login({ username, password });
+    console.log(loginData.code);
+    if (loginData.code === 200) {
+      localStorage.setItem('token', loginData.data.token);
+    }
+    throw {
+      loginData
+    };
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

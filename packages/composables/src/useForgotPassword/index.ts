@@ -6,8 +6,8 @@ import {
 
 const factoryParams: UseForgotPasswordFactoryParams<any> = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  resetPassword: async (context: Context, { username, customQuery }) => {
-    console.log('Mocked: resetPassword');
+  resetPassword: async (context: Context, { username, customQuery }: any) => {
+    console.log('Mocked: resetPassword', username);
     const userData: any = await context.$shopizer.api.forgotPassword({ username });
     return userData;
   },

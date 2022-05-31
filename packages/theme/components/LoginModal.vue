@@ -47,8 +47,11 @@
               label="Remember me"
               class="form__element checkbox"
             />
-            <div v-if="error.login">
+            <div v-if="error.login" class="error_message">
               {{ error.login }}
+            </div>
+            <div v-if="success.login" class="success_message">
+              {{ success.login }}
             </div>
             <SfButton v-e2e="'login-modal-submit'"
               type="submit"
@@ -169,8 +172,11 @@
                 class="form__element"
               />
             </ValidationProvider>
-            <div v-if="error.register">
+            <div v-if="error.register" class="error_message">
               {{ error.register }}
+            </div>
+            <div v-if="success.register" class="success_message">
+              {{ success.register }}
             </div>
             <SfButton
               type="submit"
@@ -194,7 +200,7 @@
   </SfModal>
 </template>
 <script>
-import { ref, watch, reactive, computed } from '@nuxtjs/composition-api';
+import { ref, watch, reactive, computed, useRouter } from '@nuxtjs/composition-api';
 import { SfModal, SfInput, SfButton, SfCheckbox, SfLoader, SfAlert, SfBar } from '@storefront-ui/vue';
 import { ValidationProvider, ValidationObserver, extend } from 'vee-validate';
 import { required, email } from 'vee-validate/dist/rules';
@@ -224,7 +230,7 @@ export default {
     ValidationObserver,
     SfBar
   },
-  setup() {
+  setup(props, {root}) {
     const SCREEN_LOGIN = 'login';
     const SCREEN_REGISTER = 'register';
     const SCREEN_THANK_YOU = 'thankYouAfterForgotten';
@@ -237,9 +243,13 @@ export default {
     const rememberMe = ref(false);
     const { register, login, loading, error: userError } = useUser();
     const { request, error: forgotPasswordError, loading: forgotPasswordLoading } = useForgotPassword();
-    const currentScreen = ref(SCREEN_REGISTER);
-
+    const currentScreen = ref(SCREEN_LOGIN);
+    const router = useRouter();
     const error = reactive({
+      login: null,
+      register: null
+    });
+    const success = reactive({
       login: null,
       register: null
     });
@@ -247,6 +257,10 @@ export default {
     const resetErrorValues = () => {
       error.login = null;
       error.register = null;
+    };
+    const resetSuccessValues = () => {
+      success.login = null;
+      success.register = null;
     };
 
     const barTitle = computed(() => {
@@ -271,19 +285,13 @@ export default {
       resetErrorValues();
       currentScreen.value = screenName;
     };
-
-    const handleForm = (fn) => async () => {
-      resetErrorValues();
-      await fn({ user: form.value });
-
-      const hasUserErrors = userError.value.register || userError.value.login;
-
-      if (hasUserErrors) {
-        error.login = userError.value.login?.message;
-        error.register = userError.value.register?.message;
-        return;
-      }
-      toggleLoginModal();
+    const handleForm = async () => {
+      setTimeout(() => {
+        resetSuccessValues();
+        toggleLoginModal();
+        const localeAccountPath = root.localePath({ name: 'my-account' });
+        router.push(localeAccountPath);
+      }, 3000);
     };
 
     const closeModal = () => {
@@ -292,12 +300,47 @@ export default {
       toggleLoginModal();
     };
 
-    const handleRegister = async () => handleForm(register)();
+    const handleRegister = async () => {
+      console.log(form.value);
+
+      resetErrorValues();
+      const param = {
+        userName: form.value.email,
+        password: form.value.password,
+        emailAddress: form.value.email,
+        gender: 'M',
+        language: 'en',
+        billing: {
+          country: 'IN',
+          stateProvince: 'GJ',
+          firstName: form.value.firstName,
+          lastName: form.value.lastName
+        }
+      };
+      console.log('jaimin');
+      await register({ user: param });
+      console.log(userError.value.register);
+      const hasUserErrors = userError.value.register?.data;
+      if (hasUserErrors.code !== 200) {
+        error.register = hasUserErrors.message;
+        return;
+      }
+      success.register = hasUserErrors.message;
+      handleForm();
+    };
 
     // const handleLogin = async () => handleForm(login)();
     const handleLogin = async () => {
-      const param = { username: form.value.username, password: form.value.password };
-      await login(param);
+      resetErrorValues();
+      // const param = { username: form.value.username, password: form.value.password };
+      await login({ user: form.value });
+      const hasUserErrors = userError.value.login?.loginData;
+      if (hasUserErrors.code !== 200) {
+        error.login = hasUserErrors.message;
+        return;
+      }
+      success.login = hasUserErrors.message;
+      handleForm();
     };
 
     const handleForgotten = async () => {
@@ -307,6 +350,7 @@ export default {
     return {
       form,
       error,
+      success,
       userError,
       loading,
       createAccount,
@@ -359,6 +403,16 @@ export default {
 }
 .checkbox {
   margin-bottom: var(--spacer-2xl);
+}
+.error_message{
+  color: var(--c-danger);
+  text-align: center;
+  margin-bottom: var(--spacer-xs);
+}
+.success_message{
+  color: var(--c-primary);
+  text-align: center;
+  margin-bottom: var(--spacer-xs);
 }
 .bottom {
   text-align: center;

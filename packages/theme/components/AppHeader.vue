@@ -152,16 +152,16 @@ export default {
       const count = cartGetters.getTotalItems(cart.value);
       return count ? count.toString() : null;
     });
-    // console.log(categoryData);
     const marketLogo = computed(() => marketGetters.getStoreLogo(response.value));
     const accountIcon = computed(() => isAuthenticated.value ? 'profile_fill' : 'profile');
     // TODO: https://github.com/DivanteLtd/vue-storefront/issues/4927
-    const handleAccountClick = async () => {
-      if (isAuthenticated.value) {
-        const localeAccountPath = root.localePath({ name: 'my-account' });
-        return router.push(localeAccountPath);
+    const handleAccountClick = () => {
+      if (typeof window !== 'undefined') {
+        if (localStorage.getItem('token')) {
+          const localeAccountPath = root.localePath({ name: 'my-account' });
+          return router.push(localeAccountPath);
+        }
       }
-
       toggleLoginModal();
     };
 
