@@ -13,7 +13,10 @@ const params: UseCartFactoryParams<Cart, CartItem, Product> = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   load: async (context: Context, {customQuery}) => {
     console.log('Mocked: useCart.load');
-    const cart = await context.$shopizer.api.getCart(customQuery);
+    const cart = await context.$shopizer.api.getCart({customQuery});
+    if (cart) {
+      localStorage.setItem('cartId', cart.code);
+    }
     return cart;
   },
 
@@ -21,6 +24,7 @@ const params: UseCartFactoryParams<Cart, CartItem, Product> = {
   addItem: async (context: Context, { currentCart, product, quantity, customQuery }: any) => {
     console.log('Mocked: useCart.addItem');
     let qty = 0;
+    console.log(currentCart);
     if (currentCart) {
       const item = currentCart?.products.find(cart => cart.id === product?.id);
       if (item === undefined) {
@@ -31,8 +35,9 @@ const params: UseCartFactoryParams<Cart, CartItem, Product> = {
     } else {
       qty = quantity;
     }
-    const response: any = await context.$shopizer.api.addToCart({product, cartId: currentCart, qty});
-    await params.load(context, {customQuery: response.code});
+    const token = localStorage.getItem('token');
+    const response: any = await context.$shopizer.api.addToCart({product, cartId: currentCart, qty, token});
+    await params.load(context, {customQuery: { cartId: response.code, currentLanguageCode: 'en', isLogin: localStorage.getItem('token') }});
     localStorage.setItem('cartId', response.code);
     return response;
   },
@@ -41,7 +46,7 @@ const params: UseCartFactoryParams<Cart, CartItem, Product> = {
   removeItem: async (context: Context, { currentCart, product, customQuery }: any) => {
     console.log('Mocked: useCart.removeItem');
     await context.$shopizer.api.deleteFromCart({productId: product.id, cartId: currentCart.code});
-    const data = await context.$shopizer.api.getCart(currentCart.code);
+    const data = await context.$shopizer.api.getCart({customQuery: { cartId: currentCart.code, currentLanguageCode: 'en', isLogin: localStorage.getItem('token') }});
     if (data) {
       return data;
     } else {

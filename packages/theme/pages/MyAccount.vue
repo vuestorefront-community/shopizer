@@ -42,7 +42,7 @@
 <script>
 import { SfBreadcrumbs, SfContentPages } from '@storefront-ui/vue';
 import { computed, onBeforeUnmount, useRoute, useRouter } from '@nuxtjs/composition-api';
-import { useUser } from '@vue-storefront/shopizer';
+import { useUser, useContent, useCart, cartGetters } from '@vue-storefront/shopizer';
 import MyProfile from './MyAccount/MyProfile';
 import ShippingDetails from './MyAccount/ShippingDetails';
 import BillingDetails from './MyAccount/BillingDetails';
@@ -72,6 +72,8 @@ export default {
     const router = useRouter();
 
     const { logout } = useUser();
+    const { userCartData } = useContent();
+    const { cart, addItem: addItemToCart } = useCart();
     const isMobile = computed(() => mapMobileObserver().isMobile.get());
     const activePage = computed(() => {
       const { pageName } = route.value.params;
@@ -85,6 +87,15 @@ export default {
       }
     });
 
+    if (userCartData.value) {
+      const usercartData = computed(() => cartGetters.getItems(userCartData.value));
+      const cartItem = usercartData.value;
+      console.log(cartItem, '-------');
+      const cartData = computed(() => cartGetters.getItems(cart.value));
+      cartData.value.products.map((product) => {
+        addItemToCart({ cartItem, product, quantity: product.quantity });
+      });
+    }
     const changeActivePage = async (title) => {
       if (title === 'Log out') {
         await logout();

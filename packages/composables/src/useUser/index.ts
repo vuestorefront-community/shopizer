@@ -44,15 +44,16 @@ const params: UseUserFactoryParams<User, UpdateParams, RegisterParams> = {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   logIn: async (context: Context, { username, password }: any) => {
-    console.log(password, 'Mocked: useUser.logIn', username);
+    console.log('Mocked: useUser.logIn');
     const loginData: any = await context.$shopizer.api.login({ username, password });
-    console.log(loginData.code);
     if (loginData.code === 200) {
       localStorage.setItem('token', loginData.data.token);
+      return loginData;
+    } else {
+      throw {
+        message: loginData.message
+      };
     }
-    throw {
-      loginData
-    };
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

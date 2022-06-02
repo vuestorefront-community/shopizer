@@ -161,6 +161,31 @@
                 class="form__element"
               />
             </ValidationProvider>
+            <ValidationProvider rules="required" v-slot="{ errors }">
+                <SfSelect
+                  v-e2e="'login-modal-country'"
+                  class="form__element sf-select--underlined"
+                  label="Country"
+                  :valid="!errors[0]"
+                  :errorMessage="errors[0]"
+                  v-model="form.country"
+                  @input="getState(form.country)"
+                >
+                  <SfSelectOption v-for="(country, i) in shipCountryData" :key="i" :value="country.code">{{country.name}}</SfSelectOption>
+                </SfSelect>
+            </ValidationProvider>
+            <ValidationProvider rules="required" v-slot="{ errors }">
+                <SfSelect
+                  v-e2e="'login-modal-state'"
+                  class="form__element sf-select--underlined"
+                  label="State"
+                  :valid="!errors[0]"
+                  :errorMessage="errors[0]"
+                  v-model="form.state"
+                >
+                  <SfSelectOption v-for="(state, i) in shipStateData" :key="i" :value="state.code">{{state.name}}</SfSelectOption>
+                </SfSelect>
+            </ValidationProvider>
             <ValidationProvider :rules="{ required: { allowFalse: false } }" v-slot="{ errors }">
               <SfCheckbox
                 v-e2e="'login-modal-create-account'"
@@ -201,11 +226,12 @@
 </template>
 <script>
 import { ref, watch, reactive, computed, useRouter } from '@nuxtjs/composition-api';
-import { SfModal, SfInput, SfButton, SfCheckbox, SfLoader, SfAlert, SfBar } from '@storefront-ui/vue';
+import { SfModal, SfInput, SfButton, SfCheckbox, SfLoader, SfAlert, SfBar, SfSelect } from '@storefront-ui/vue';
 import { ValidationProvider, ValidationObserver, extend } from 'vee-validate';
 import { required, email } from 'vee-validate/dist/rules';
-import { useUser, useForgotPassword } from '@vue-storefront/shopizer';
+import { useUser, useForgotPassword, useContent } from '@vue-storefront/shopizer';
 import { useUiState } from '~/composables';
+import { onSSR } from '@vue-storefront/core';
 
 extend('email', {
   ...email,
@@ -228,7 +254,8 @@ export default {
     SfAlert,
     ValidationProvider,
     ValidationObserver,
-    SfBar
+    SfBar,
+    SfSelect
   },
   setup(props, {root}) {
     const SCREEN_LOGIN = 'login';
@@ -243,8 +270,17 @@ export default {
     const rememberMe = ref(false);
     const { register, login, loading, error: userError } = useUser();
     const { request, error: forgotPasswordError, loading: forgotPasswordLoading } = useForgotPassword();
+    const { getCountry, countryData, getState, stateData, getUserCartData } = useContent();
     const currentScreen = ref(SCREEN_LOGIN);
     const router = useRouter();
+
+    onSSR(async () => {
+      await Promise.all([
+        getCountry({ currentLanguageCode: 'en' })
+      ]);
+    });
+    const shipCountryData = computed(() => countryData.value);
+    const shipStateData = computed(() => stateData.value);
     const error = reactive({
       login: null,
       register: null
@@ -290,7 +326,7 @@ export default {
         resetSuccessValues();
         toggleLoginModal();
         const localeAccountPath = root.localePath({ name: 'my-account' });
-        router.push(localeAccountPath);
+        return router.push(localeAccountPath);
       }, 3000);
     };
 
@@ -301,8 +337,6 @@ export default {
     };
 
     const handleRegister = async () => {
-      console.log(form.value);
-
       resetErrorValues();
       const param = {
         userName: form.value.email,
@@ -311,21 +345,20 @@ export default {
         gender: 'M',
         language: 'en',
         billing: {
-          country: 'IN',
-          stateProvince: 'GJ',
+          country: form.value.country,
+          stateProvince: form.value.state,
           firstName: form.value.firstName,
           lastName: form.value.lastName
         }
       };
-      console.log('jaimin');
       await register({ user: param });
       console.log(userError.value.register);
-      const hasUserErrors = userError.value.register?.data;
-      if (hasUserErrors.code !== 200) {
+      const hasUserErrors = userError.value.register;
+      if (hasUserErrors) {
         error.register = hasUserErrors.message;
         return;
       }
-      success.register = hasUserErrors.message;
+      success.register = 'You have successfully registerd in to this website.';
       handleForm();
     };
 
@@ -334,13 +367,14 @@ export default {
       resetErrorValues();
       // const param = { username: form.value.username, password: form.value.password };
       await login({ user: form.value });
-      const hasUserErrors = userError.value.login?.loginData;
-      if (hasUserErrors.code !== 200) {
+      const hasUserErrors = userError.value.login;
+      if (hasUserErrors) {
         error.login = hasUserErrors.message;
         return;
       }
-      success.login = hasUserErrors.message;
+      success.login = 'You have successfully logged in to this website';
       handleForm();
+      getUserCartData('en');
     };
 
     const handleForgotten = async () => {
@@ -370,7 +404,10 @@ export default {
       SCREEN_LOGIN,
       SCREEN_REGISTER,
       SCREEN_THANK_YOU,
-      SCREEN_FORGOTTEN
+      SCREEN_FORGOTTEN,
+      shipCountryData,
+      getState,
+      shipStateData
     };
   }
 };
@@ -385,7 +422,7 @@ export default {
 .form {
   margin-top: var(--spacer-sm);
   &__element {
-    margin: 0 0 var(--spacer-xl) 0;
+    margin: 0 0 var(--spacer-base) 0;
   }
 }
 .action {

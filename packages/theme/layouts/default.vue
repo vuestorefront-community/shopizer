@@ -64,11 +64,8 @@ export default {
         loadWishlist()
       ]);
     });
-
     if (typeof window !== 'undefined') {
-      if (localStorage.getItem('cartId')) {
-        loadCart({customQuery: localStorage.getItem('cartId')});
-      }
+      loadCart({customQuery: { cartId: localStorage.getItem('cartId'), currentLanguageCode: 'en', isLogin: localStorage.getItem('token') } });
     }
     return {
       route
@@ -141,5 +138,11 @@ h4 {
   font-size: var(--h4-font-size);
   line-height: 1.6;
   margin: 0;
+}
+input:focus {
+  outline: none;
+}
+select:focus {
+  outline: none;
 }
 </style>

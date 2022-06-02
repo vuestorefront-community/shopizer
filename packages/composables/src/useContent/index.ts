@@ -10,6 +10,9 @@ export const useContent = (): any => {
   const manufactureItemResult = sharedRef(null, 'manufacture');
   const variantsItemResult = sharedRef(null, 'variants');
   const categoryDetails = sharedRef(null, 'details');
+  const countryData = sharedRef(null, 'country');
+  const stateData = sharedRef(null, 'state');
+  const userCartData = sharedRef(null, 'userCartData');
 
   const getCategoryHierarchy = async(params: any) => {
     console.log('load: getCategoryHierarchy');
@@ -51,6 +54,24 @@ export const useContent = (): any => {
     categoryDetails.value = details;
     return details;
   };
+  const getCountry = async (params: any) => {
+    console.log('Mocked: useFacet.country', params);
+    const country: any = await context.$shopizer.api.getCountry(params);
+    countryData.value = country;
+    return country;
+  };
+  const getState = async (code: any) => {
+    console.log('Mocked: useFacet.state', code);
+    const state: any = await context.$shopizer.api.getState(code);
+    stateData.value = state;
+    return state;
+  };
+  const getUserCartData = async (currentLanguageCode: any) => {
+    console.log('Mocked: useFacet.getUserCartData');
+    const cartData: any = await context.$shopizer.api.getUserCartData({currentLanguageCode, isLogin: localStorage.getItem('token')});
+    userCartData.value = cartData;
+    return cartData;
+  };
   return {
     getCategoryHierarchy,
     getContent,
@@ -58,11 +79,17 @@ export const useContent = (): any => {
     getManufacturers,
     getVariants,
     getCategoryDetails,
+    getCountry,
+    getState,
+    getUserCartData,
     categoryData: computed(() => categoryresult.value),
     contentData: computed(() => contentresult.value),
     featuredItemData: computed(() => featureItemResult.value),
     manufactureData: computed(() => manufactureItemResult.value),
     variantsData: computed(() => variantsItemResult.value),
-    categoryDetails: computed(() => categoryDetails.value)
+    categoryDetails: computed(() => categoryDetails.value),
+    countryData: computed(() => countryData.value),
+    stateData: computed(() => stateData.value),
+    userCartData: computed(() => userCartData.value)
   };
 };
