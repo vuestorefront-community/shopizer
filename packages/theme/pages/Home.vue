@@ -65,12 +65,13 @@
               :max-rating="5"
               :score-rating="product.rating"
               wishlistIcon=""
-              :addToCartDisabled="product.available || product.canBePurchased || product.visible || product.quantity > 0"
               :link="localePath(`/p/${product.id}/${product.description.friendlyUrl}`)"
               class="carousel__item__product"
-              @click:add-to-cart="addItemToCart({ cartItem, product, quantity: 1})"
+              @click:add-to-cart="addItemToCart({ product, quantity: 1, customQuery: cartItem})"
             />
           </SfCarouselItem>
+
+              <!-- :addToCartDisabled="product.available || product.canBePurchased || product.visible || product.quantity > 0" -->
         </SfCarousel>
     </LazyHydrate>
 

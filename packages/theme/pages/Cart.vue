@@ -71,6 +71,13 @@
           </div>
           <button data-v-30fc7773="" data-testid="apply-button" class="sf-order-summary__promo-code-button sf-button"> Apply </button>
       </div>
+      <nuxt-link :to="localePath({ name: 'shipping' })">
+          <SfButton
+            class="sf-button--full-width color-primary"
+          >
+            {{ $t('Go to checkout') }}
+          </SfButton>
+      </nuxt-link>
 		</div>
 		</div>
       <div class="detailed-cart__main">

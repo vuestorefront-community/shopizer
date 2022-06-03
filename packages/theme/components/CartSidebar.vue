@@ -100,7 +100,7 @@
             </nuxt-link>
             <nuxt-link :to="localePath({ name: 'shipping' })">
               <SfButton
-                class="sf-button--full-width color-secondary"
+                class="sf-button--full-width color-primary"
                 @click="toggleCartSidebar"
               >
                 {{ $t('Go to checkout') }}
@@ -153,6 +153,8 @@ export default {
   setup() {
     const { isCartSidebarOpen, toggleCartSidebar } = useUiState();
     const { cart, removeItem, updateItemQty, loading } = useCart();
+
+    console.log(cart);
     const cartData = computed(() => cartGetters.getItems(cart.value));
     const totals = computed(() => cartGetters.getTotals(cart.value));
     const totalItems = computed(() => cartGetters.getTotalItems(cart.value));

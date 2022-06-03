@@ -73,7 +73,7 @@ export default {
 
     const { logout } = useUser();
     const { userCartData } = useContent();
-    const { cart, addItem: addItemToCart } = useCart();
+    const { load, cart, addItem: addItemToCart } = useCart();
     const isMobile = computed(() => mapMobileObserver().isMobile.get());
     const activePage = computed(() => {
       const { pageName } = route.value.params;
@@ -90,11 +90,15 @@ export default {
     if (userCartData.value) {
       const usercartData = computed(() => cartGetters.getItems(userCartData.value));
       const cartItem = usercartData.value;
-      console.log(cartItem, '-------');
       const cartData = computed(() => cartGetters.getItems(cart.value));
-      cartData.value.products.map((product) => {
-        addItemToCart({ cartItem, product, quantity: product.quantity });
-      });
+      // console.log(cartData);
+      if (cartData.value) {
+        cartData.value.products.map((product) => {
+          addItemToCart({ product, quantity: product.quantity, customQuery: cartItem });
+        });
+      } else if (typeof window !== 'undefined') {
+        load({customQuery: { cartId: cartItem.code, currentLanguageCode: 'en', isLogin: localStorage.getItem('token') } });
+      }
     }
     const changeActivePage = async (title) => {
       if (title === 'Log out') {

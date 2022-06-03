@@ -22,9 +22,9 @@
         :key="index"
         class="table__row"
       >
-        <SfTableData class="table__image">
+        <!-- <SfTableData class="table__image">
           <SfImage :src="addBasePath(cartGetters.getItemImage(product))" :alt="cartGetters.getItemName(product)" />
-        </SfTableData>
+        </SfTableData> -->
         <SfTableData class="table__data table__description table__data">
           <div class="product-title">{{ cartGetters.getItemName(product) }}</div>
           <div class="product-sku">{{ cartGetters.getItemSku(product) }}</div>

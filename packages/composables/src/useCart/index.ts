@@ -24,9 +24,8 @@ const params: UseCartFactoryParams<Cart, CartItem, Product> = {
   addItem: async (context: Context, { currentCart, product, quantity, customQuery }: any) => {
     console.log('Mocked: useCart.addItem');
     let qty = 0;
-    console.log(currentCart);
-    if (currentCart) {
-      const item = currentCart?.products.find(cart => cart.id === product?.id);
+    if (customQuery) {
+      const item = customQuery?.products.find(cart => cart.id === product?.id);
       if (item === undefined) {
         qty = quantity;
       } else {
@@ -36,7 +35,7 @@ const params: UseCartFactoryParams<Cart, CartItem, Product> = {
       qty = quantity;
     }
     const token = localStorage.getItem('token');
-    const response: any = await context.$shopizer.api.addToCart({product, cartId: currentCart, qty, token});
+    const response: any = await context.$shopizer.api.addToCart({product, cartId: customQuery, qty, token});
     await params.load(context, {customQuery: { cartId: response.code, currentLanguageCode: 'en', isLogin: localStorage.getItem('token') }});
     localStorage.setItem('cartId', response.code);
     return response;

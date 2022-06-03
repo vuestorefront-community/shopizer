@@ -267,11 +267,14 @@ export default {
 
     const pagination = computed(() => facetGetters.getPagination(result.value));
 
-    const addToCart = ({ product, quantity }) => {
+    const addToCart = ({ cartItem, product, quantity }) => {
       const { id, sku } = product;
+      console.log(cartItem);
       addItemToCart({
         product: { id, sku },
-        quantity
+        quantity,
+        customQuery: cartItem
+
       });
     };
     const getSortParams = async(sortType, sortValue) => {

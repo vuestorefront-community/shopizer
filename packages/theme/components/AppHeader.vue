@@ -147,7 +147,6 @@ export default {
     const searchBarRef = ref(null);
     const result = ref(null);
     const isMobile = ref(mapMobileObserver().isMobile.get());
-
     const cartTotalItems = computed(() => {
       const count = cartGetters.getTotalItems(cart.value);
       return count ? count.toString() : null;

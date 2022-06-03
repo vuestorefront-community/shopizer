@@ -13,7 +13,7 @@ const params: UseUserFactoryParams<User, UpdateParams, RegisterParams> = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   load: async (context: Context) => {
     console.log('Mocked: useUser.load');
-    return 'jaimin';
+    return '';
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

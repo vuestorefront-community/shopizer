@@ -12,7 +12,7 @@ export async function addToCart(context: Context, {product, cartId, qty, token}:
       } else {
         data = await context.client.put(url.href, param);
       }
-      console.log(data, 'jaimin');
+      // console.log(data, 'jaimin');
       // const { data } = await context.client.put(url.href, param);
       return data.data;
     } else {
