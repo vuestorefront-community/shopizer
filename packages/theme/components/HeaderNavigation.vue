@@ -5,12 +5,25 @@
     <SfHeaderNavigationItem
       v-for="(category, index) in categories"
       :key="index"
-      class="nav-item"
+      class="nav-item mainmenu"
       v-e2e="`app-header-url_${category}`"
       :label="category.description.name"
       :link="localePath(`/c/${category.id}/${category.description.friendlyUrl}`)"
       v-if="category.visible"
-    />
+    >
+    <template>
+      <SfMenuItem
+        v-for="(submenu, i) in category.children"
+        :key="i"
+        class="nav-item submenu"
+        v-e2e="`app-header-url_${submenu}`"
+        :label="submenu.description.name"
+        :link="localePath(`/c/${submenu.id}/${submenu.description.friendlyUrl}`)"
+        v-if="category.children && category.children.length > 0"
+      >
+      </SfMenuItem>
+    </template>
+    </SfHeaderNavigationItem>
     <SfHeaderNavigationItem
       v-for="(content, index) in contents"
       :key="index"
@@ -104,6 +117,45 @@ export default {
     display: block;
   }
 }
+.mainmenu{
+  position: relative;
+  &:hover {
+    .submenu{
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      width: 100%;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.5s ease 0s;
+      transform: rotateX(0deg);
+      transform-origin: center top 0;
+visibility: visible;
+      background: #fff none repeat scroll 0 0;
+      box-shadow: 0 0 7px 0.5px rgba(0, 0, 0, 0.15);
+      border: none;
+      &:focus,
+      &:hover{
+        color: #000;
+        border: none;
+      }
+    }
+  }
+}
+.submenu{
+  // display: none;
+  position: absolute;
+      top: 108px;
+      z-index: 9;
+      visibility: hidden;
+          transform: rotateX(0deg);
+
+          .sf-menu-item__count{
+  display: none;
+}
+
+}
+
 .sf-modal {
   ::v-deep &__bar {
     display: none;

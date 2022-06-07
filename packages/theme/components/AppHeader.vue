@@ -1,7 +1,7 @@
 <template>
   <div>
     <SfHeader
-      class="sf-header--has-mobile-search"
+      class="sf-header--has-mobile-search "
       :class="{'header-on-top': isSearchOpen}"
       :isNavVisible="isMobileMenuOpen"
     >
@@ -233,12 +233,20 @@ export default {
 
 <style lang="scss" scoped>
 .sf-header {
+  box-shadow: 0 0 25px 0 rgb(0 0 0 / 6%);
   --header-padding:  var(--spacer-sm);
+
   @include for-desktop {
-    --header-padding: 0;
+    --header-padding: 5;
+    --header-width: 95%
   }
   &__logo-image {
     height: 100%;
+  }
+  &__header{
+    max-width: 100%;
+    margin-right: 25px;
+    margin-left: 25px;
   }
 }
 .header-on-top {
