@@ -41,7 +41,8 @@ Want to contribute? Ping us on `shopizer` channel on [our Discord](https://disco
     ```
 3. Run `yarn` to install dependencies
 4. Build dependencies `yarn build:api-client && yarn build:composables`
-5. Run `yarn dev:theme` to run theme. You can find other commands in `package.json`
+5. Run `yarn dev:theme` or `yarn dev` to run theme. You can find other commands in `package.json`
+
 
 - If you need HMR on Api Client/Composables run `yarn dev:api-client` or `yarn dev:composables` on a separate terminal window.
 
