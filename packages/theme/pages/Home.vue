@@ -216,24 +216,24 @@ export default {
     // ]);
     const heroes = [
       {
-        title: 'Colorful summer dresses are already in store',
-        subtitle: 'SUMMER COLLECTION 2019',
+        title: 'Imports from the world. Available in store',
+        subtitle: 'THAILAND COLLECTION 2022',
         background: '#eceff1',
-        image: addBasePath('/homepage/bannerH.webp')
+        image: addBasePath('/homepage/furniture.webp')
       },
       {
-        title: 'Colorful summer dresses are already in store',
-        subtitle: 'SUMMER COLLECTION 2019',
+        title: 'Imports from the world. Available in store',
+        subtitle: 'THAILAND COLLECTION 2022',
         background: '#efebe9',
-        image: addBasePath('/homepage/bannerA.webp'),
+        image: addBasePath('/homepage/bookshelf.png'),
         className:
           'sf-hero-item--position-bg-top-left sf-hero-item--align-right'
       },
       {
-        title: 'Colorful summer dresses are already in store',
-        subtitle: 'SUMMER COLLECTION 2019',
+        title: 'Imports from the world. Available in store',
+        subtitle: 'THAILAND COLLECTION 2022',
         background: '#fce4ec',
-        image: addBasePath('/homepage/bannerB.webp')
+        image: addBasePath('/homepage/drawer.png')
       }
     ];
     const banners = [
