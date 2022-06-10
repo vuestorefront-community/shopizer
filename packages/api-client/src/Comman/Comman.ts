@@ -7,7 +7,7 @@ export async function getCountry(context: Context, params: any): Promise<object>
     const { data } = await context.client.get(url.href);
     return data;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 }
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -17,6 +17,6 @@ export async function getState(context: Context, code: any): Promise<object> {
     const { data } = await context.client.get(url.href);
     return data;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 }

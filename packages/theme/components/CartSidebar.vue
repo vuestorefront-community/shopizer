@@ -64,7 +64,7 @@
             <SfImage
               alt="Empty bag"
               class="empty-cart__image"
-              :src="addBasePath('/icons/empty-cart.svg')"
+              :src="require('@storefront-ui/shared/icons/empty_cart.svg')"
             />
             <SfHeading
               title="Your cart is empty"

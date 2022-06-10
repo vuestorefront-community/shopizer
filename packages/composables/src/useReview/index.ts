@@ -12,14 +12,18 @@ import type {
 const params: UseReviewFactoryParams<Review, SearchParams, AddParams> = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   searchReviews: async (context: Context, params) => {
-    console.log('Mocked: useReview.searchReviews');
-    return {};
+    console.log('Mocked: useReview.searchReviews', params);
+    const reviews: any = await context.$shopizer.api.getReviews(params);
+    return reviews;
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   addReview: async (context: Context, params) => {
     console.log('Mocked: useReview.addReview');
-    return {};
+    params.token = localStorage.getItem('token');
+    const reviewResponse: any = await context.$shopizer.api.addReview(params);
+    console.log(reviewResponse, '--------');
+    return reviewResponse;
   }
 };
 

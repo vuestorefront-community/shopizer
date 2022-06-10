@@ -409,6 +409,13 @@ export default {
      -webkit-transform-origin: center;
      transform-origin: center;
   }
+  ::v-deep .sf-product-card__image-wrapper {
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+  }
 }
 
 </style>

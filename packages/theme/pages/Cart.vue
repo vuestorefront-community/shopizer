@@ -140,23 +140,20 @@
             </transition-group>
           </div>
           <div v-else key="empty-cart" class="empty-cart">
-            <SfImage
-              :src="require('@storefront-ui/shared/icons/empty_cart.svg')"
-              alt="Empty cart"
-              class="empty-cart__image"
-              :width="140"
-              :height="200"
-            />
-            <SfHeading
-              title="Your cart is empty"
-              :level="2"
-              description="Looks like you haven’t added any items to the cart yet. Start
+            <div class="empty-cart__banner">
+              <SfImage
+                alt="Empty bag"
+                class="empty-cart__image"
+                :src="require('@storefront-ui/shared/icons/empty_cart.svg')"
+              />
+              <SfHeading
+                title="Your cart is empty"
+                :level="2"
+                class="empty-cart__heading"
+                description="Looks like you haven’t added any items to the bag yet. Start
                 shopping to fill it in."
-            />
-            <SfButton
-              class="sf-button--full-width color-primary empty-cart__button"
-              >Start shopping</SfButton
-            >
+              />
+            </div>
           </div>
         </transition>
       </div>
@@ -310,6 +307,34 @@ export default {
     }
     &__button {
       --button-width: 20.9375rem;
+    }
+  }
+  .empty-cart {
+    --heading-description-margin: 0 0 var(--spacer-xl) 0;
+    --heading-title-margin: 0 0 var(--spacer-xl) 0;
+    --heading-title-color: var(--c-primary);
+    --heading-title-font-weight: var(--font-weight--semibold);
+    display: flex;
+    flex: 1;
+    align-items: center;
+    flex-direction: column;
+    &__banner {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+    }
+    &__heading {
+      padding: 0 var(--spacer-base);
+    }
+    &__image {
+      --image-width: 16rem;
+      margin: 0 0 var(--spacer-2xl) 7.5rem;
+    }
+    @include for-desktop {
+      --heading-title-font-size: var(--font-size--xl);
+      --heading-title-margin: 0 0 var(--spacer-sm) 0;
     }
   }
 }

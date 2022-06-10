@@ -2,7 +2,7 @@ import { Context } from '@vue-storefront/core';
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export async function addToCart(context: Context, {product, cartId, qty, token}: any): Promise<object> {
   let url: any;
-  const param = { product: product.id, quantity: qty };
+  const param = { product: product.sku, quantity: qty };
   try {
     if (cartId) {
       url = new URL(`api/v1/cart/${cartId.code}?store=${context.config.store}`, context.config.api.url);
@@ -27,7 +27,7 @@ export async function addToCart(context: Context, {product, cartId, qty, token}:
       return data.data;
     }
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 }
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -52,7 +52,7 @@ export async function getCart(context: Context, params: any): Promise<object> {
     }
     return data.data;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 }
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -62,7 +62,7 @@ export async function deleteFromCart(context: Context, {productId, cartId} : any
     const { data } = await context.client.delete(url.href);
     return data;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 }
 
@@ -73,6 +73,6 @@ export async function getUserCartData(context: Context, params: any): Promise<ob
     const { data } = await context.client.get(url.href, { headers: { Authorization: `Bearer ${params.isLogin}` } });
     return data;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 }

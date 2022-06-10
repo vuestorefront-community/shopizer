@@ -7,7 +7,7 @@ export async function getFeaturedItems(context: Context): Promise<object> {
     const { data } = await context.client.get(url.href);
     return data;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 }
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -17,7 +17,7 @@ export async function getProductDetails(context: Context, params: any): Promise<
     const { data } = await context.client.get(url.href);
     return data;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 }
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -27,7 +27,7 @@ export async function getProductList(context: Context, params: any): Promise<obj
     const { data } = await context.client.get(url.href);
     return data;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 }
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types

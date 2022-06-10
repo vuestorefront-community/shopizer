@@ -50,8 +50,7 @@
           </div>
         </div>
         <div>
-          <p class="product__description desktop-only">
-            {{productGetters.getDescription(product)}}
+          <p class="product__description desktop-only" v-html="productGetters.getDescription(product)">
           </p>
           <!-- <SfButton class="sf-button--text desktop-only product__guide">
             {{ $t('Size guide') }}
@@ -90,76 +89,102 @@
             :disabled="!product.available || !product.canBePurchased || !product.visible || product.quantity === 0"
             :canAddToCart="product.quantity > 0"
             class="product__add-to-cart"
-            @click="addItem({ product, quantity: parseInt(qty) })"
+            @click="addItem({ product, quantity: parseInt(qty), customQuery: cartItem })"
           />
         </div>
 
-        <LazyHydrate when-idle>
-          <SfTabs :open-tab="1" class="product__tabs">
-            <SfTab title="Description">
-              <div class="product__description">
-                  {{ productGetters.getDescription(product) }}
-              </div>
-              <SfProperty
-                v-if="properties.weight"
-                :name="'Weight'"
-                :value="properties.weight"
-                class="product__property"
-              >
-              </SfProperty>
-              <SfProperty
-                v-if="properties.length && properties.width && properties.height"
-                :name="'Package size'"
-                :value="`${properties.length || 0} x ${properties.width || 0} x ${properties.height || 0}`"
-                class="product__property"
-              >
-              </SfProperty>
-              <SfProperty
-                v-for="(property, i) in properties.properties"
-                :key="i"
-                :name="property.property.name"
-                :value="property.propertyValue.name"
-                class="product__property"
-              >
-              </SfProperty>
-            </SfTab>
-            <SfTab title="Read reviews">
-              <SfReview
-                v-for="review in reviews"
-                :key="reviewGetters.getReviewId(review)"
-                :author="reviewGetters.getReviewAuthor(review)"
-                :date="reviewGetters.getReviewDate(review)"
-                :message="reviewGetters.getReviewMessage(review)"
-                :max-rating="5"
-                :rating="reviewGetters.getReviewRating(review)"
-                :char-limit="250"
-                read-more-text="Read more"
-                hide-full-text="Read less"
-                class="product__review"
-              />
-            </SfTab>
-            <!-- <SfTab
-              title="Additional Information"
-              class="product__additional-info"
-            >
-            <div class="product__additional-info">
-              <p class="product__additional-info__title">{{ $t('Brand') }}</p>
-              <p>{{ brand }}</p>
-              <p class="product__additional-info__title">{{ $t('Instruction1') }}</p>
-              <p class="product__additional-info__paragraph">
-                {{ $t('Instruction2') }}
-              </p>
-              <p class="product__additional-info__paragraph">
-                {{ $t('Instruction3') }}
-              </p>
-              <p>{{ careInstructions }}</p>
-            </div>
-            </SfTab> -->
-          </SfTabs>
-        </LazyHydrate>
       </div>
     </div>
-
+    <LazyHydrate when-idle>
+      <SfTabs :open-tab="1" class="product__tabs">
+        <SfTab title="Description">
+          <div class="product__description" v-html="productGetters.getDescription(product)">
+              <!-- {{ productGetters.getDescription(product) }} -->
+          </div>
+          <SfProperty
+            v-if="properties.weight"
+            :name="'Weight'"
+            :value="properties.weight"
+            class="product__property"
+          >
+          </SfProperty>
+          <SfProperty
+            v-if="properties.length && properties.width && properties.height"
+            :name="'Package size'"
+            :value="`${properties.length || 0} x ${properties.width || 0} x ${properties.height || 0}`"
+            class="product__property"
+          >
+          </SfProperty>
+          <SfProperty
+            v-for="(property, i) in properties.properties"
+            :key="i"
+            :name="property.property.name"
+            :value="property.propertyValue.name"
+            class="product__property"
+          >
+          </SfProperty>
+        </SfTab>
+        <SfTab title="Read reviews">
+          <div v-show="reviewLoading">
+            <SfLoader />
+          </div>
+          <div class="mainContainer">
+            <div class="leftContainer">
+              <div v-if="reviews.length > 0" key="reviews">
+                <SfReview
+                  v-for="review in reviews"
+                  :key="reviewGetters.getReviewId(review)"
+                  :author="reviewGetters.getReviewAuthor(review)"
+                  :date="reviewGetters.getReviewDate(review)"
+                  :message="reviewGetters.getReviewMessage(review)"
+                  :max-rating="5"
+                  :rating="reviewGetters.getReviewRating(review)"
+                  :char-limit="170"
+                  read-more-text="Read more"
+                  hide-full-text="Read less"
+                  class="product__review"
+                />
+              </div>
+              <div v-else key="empty-cart" class="empty-cart">
+                <div class="empty-cart__banner">
+                  <SfImage
+                    alt="Empty bag"
+                    class="empty-cart__image"
+                    :src="require('@storefront-ui/shared/icons/empty_cart.svg')"
+                  />
+                  <SfHeading
+                    title="No reivews yet"
+                    :level="2"
+                    class="empty-cart__heading"
+                    description="There are not any reviews for this product yet!"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="rightContainer form">
+                <AddProductReview/>
+            </div>
+          </div>
+        </SfTab>
+        <!-- <SfTab
+          title="Additional Information"
+          class="product__additional-info"
+        >
+        <div class="product__additional-info">
+          <p class="product__additional-info__title">{{ $t('Brand') }}</p>
+          <p>{{ brand }}</p>
+          <p class="product__additional-info__title">{{ $t('Instruction1') }}</p>
+          <p class="product__additional-info__paragraph">
+            {{ $t('Instruction2') }}
+          </p>
+          <p class="product__additional-info__paragraph">
+            {{ $t('Instruction3') }}
+          </p>
+          <p>{{ careInstructions }}</p>
+        </div>
+        </SfTab> -->
+      </SfTabs>
+    </LazyHydrate>
     <!-- <LazyHydrate when-visible>
       <RelatedProducts
         :products="relatedProducts"
@@ -192,29 +217,32 @@ import {
   SfReview,
   SfBreadcrumbs,
   SfButton,
-  SfColor
+  SfColor,
+  SfLoader
 } from '@storefront-ui/vue';
 
 import InstagramFeed from '~/components/InstagramFeed.vue';
 import RelatedProducts from '~/components/RelatedProducts.vue';
 import { ref, computed, useRoute, useRouter } from '@nuxtjs/composition-api';
-import { useProduct, useCart, productGetters, useReview, reviewGetters } from '@vue-storefront/shopizer';
+import { useProduct, useCart, productGetters, useReview, reviewGetters, cartGetters } from '@vue-storefront/shopizer';
 import { onSSR } from '@vue-storefront/core';
 import LazyHydrate from 'vue-lazy-hydration';
 import { addBasePath } from '@vue-storefront/core';
-
+import AddProductReview from '~/components/AddProductReview.vue';
 export default {
   name: 'Product',
   transition: 'fade',
   setup() {
     const qty = ref(1);
+    const form = ref({});
     const route = useRoute();
     const router = useRouter();
     const { products, search } = useProduct('products');
     // const { products: relatedProducts, search: searchRelatedProducts, loading: relatedLoading } = useProduct('relatedProducts');
-    const { addItem, loading } = useCart();
-    const { reviews: productReviews, search: searchReviews } = useReview('productReviews');
+    const { addItem, loading, cart } = useCart();
+    const { reviews: productReviews, search: searchReviews, loading: reviewLoading } = useReview('productReviews');
     const id = computed(() => route.value.params.id);
+    const cartItem = computed(() => cartGetters.getItems(cart.value));
     onSSR(async () => {
       await search({ id: id.value, currentLanguageCode: 'en' });
       await searchReviews({ productId: id.value });
@@ -262,7 +290,10 @@ export default {
       loading,
       productGetters,
       productGallery,
-      properties
+      properties,
+      cartItem,
+      form,
+      reviewLoading
     };
   },
   components: {
@@ -285,7 +316,9 @@ export default {
     SfButton,
     InstagramFeed,
     RelatedProducts,
-    LazyHydrate
+    LazyHydrate,
+    AddProductReview,
+    SfLoader
   }
 };
 </script>
@@ -446,6 +479,15 @@ export default {
 .breadcrumbs {
   margin: var(--spacer-base) auto var(--spacer-lg);
 }
+
+.mainContainer{
+  display: flex;
+  justify-content: space-between;
+  .rightContainer,
+    .leftContainer{
+      width: 49%;
+  }
+}
 @keyframes moveicon {
   0% {
     transform: translate3d(0, 0, 0);
@@ -455,6 +497,37 @@ export default {
   }
   100% {
     transform: translate3d(0, 0, 0);
+  }
+}
+.empty-cart {
+  --heading-description-margin: 0 0 var(--spacer-xl) 0;
+  --heading-title-margin: 0 0 var(--spacer-xl) 0;
+  --heading-title-color: var(--c-primary);
+  --heading-title-font-weight: var(--font-weight--semibold);
+  display: flex;
+  flex: 1;
+  align-items: center;
+  flex-direction: column;
+  &__banner {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+  }
+  &__heading {
+    padding: 0 var(--spacer-base);
+  }
+  &__image {
+    --image-width: 16rem;
+    margin: 0 0 var(--spacer-2xl) 7.5rem;
+  }
+  @include for-desktop {
+    --heading-title-font-size: var(--font-size--xl);
+    --heading-title-margin: 0 0 var(--spacer-sm) 0;
+  }
+  .mainContainer{
+    display: flex;
   }
 }
 </style>

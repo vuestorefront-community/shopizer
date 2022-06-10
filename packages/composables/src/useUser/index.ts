@@ -13,7 +13,10 @@ const params: UseUserFactoryParams<User, UpdateParams, RegisterParams> = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   load: async (context: Context) => {
     console.log('Mocked: useUser.load');
-    return '';
+    const token = localStorage.getItem('token');
+    const user: any = await context.$shopizer.api.getProfileData(token);
+    console.log(user);
+    return user;
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -36,6 +39,7 @@ const params: UseUserFactoryParams<User, UpdateParams, RegisterParams> = {
     // console.log(data)
     if (data.code === 200) {
       localStorage.setItem('token', data.data.token);
+      await params.load(context);
     }
     throw {
       data
@@ -48,6 +52,7 @@ const params: UseUserFactoryParams<User, UpdateParams, RegisterParams> = {
     const loginData: any = await context.$shopizer.api.login({ username, password });
     if (loginData.code === 200) {
       localStorage.setItem('token', loginData.data.token);
+      await params.load(context);
       return loginData;
     } else {
       throw {

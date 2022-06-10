@@ -47,12 +47,6 @@
               label="Remember me"
               class="form__element checkbox"
             />
-            <div v-if="error.login" class="error_message">
-              {{ error.login }}
-            </div>
-            <div v-if="success.login" class="success_message">
-              {{ success.login }}
-            </div>
             <SfButton v-e2e="'login-modal-submit'"
               type="submit"
               class="sf-button--full-width form__button"
@@ -197,12 +191,6 @@
                 class="form__element"
               />
             </ValidationProvider>
-            <div v-if="error.register" class="error_message">
-              {{ error.register }}
-            </div>
-            <div v-if="success.register" class="success_message">
-              {{ success.register }}
-            </div>
             <SfButton
               type="submit"
               class="sf-button--full-width form__button"
@@ -232,7 +220,7 @@ import { required, email } from 'vee-validate/dist/rules';
 import { useUser, useForgotPassword, useContent } from '@vue-storefront/shopizer';
 import { useUiState } from '~/composables';
 import { onSSR } from '@vue-storefront/core';
-
+import { useUiNotification } from '~/composables';
 extend('email', {
   ...email,
   message: 'Invalid email'
@@ -268,6 +256,7 @@ export default {
     const userEmail = ref('');
     const createAccount = ref(false);
     const rememberMe = ref(false);
+    const { send: sendNotification} = useUiNotification();
     const { register, login, loading, error: userError } = useUser();
     const { request, error: forgotPasswordError, loading: forgotPasswordLoading } = useForgotPassword();
     const { getCountry, countryData, getState, stateData, getUserCartData } = useContent();
@@ -355,10 +344,21 @@ export default {
       console.log(userError.value.register);
       const hasUserErrors = userError.value.register;
       if (hasUserErrors) {
-        error.register = hasUserErrors.message;
+        sendNotification({
+          key: 'register_failed',
+          message: hasUserErrors.message,
+          type: 'danger',
+          title: 'Register Failed.'
+        });
         return;
       }
-      success.register = 'You have successfully registerd in to this website.';
+      // success.register = 'You have successfully registerd in to this website.';
+      sendNotification({
+        key: 'register_sucess',
+        message: 'You have successfully registerd in to this website.',
+        type: 'success',
+        title: 'Register Success.'
+      });
       handleForm();
     };
 
@@ -369,10 +369,23 @@ export default {
       await login({ user: form.value });
       const hasUserErrors = userError.value.login;
       if (hasUserErrors) {
-        error.login = hasUserErrors.message;
+        sendNotification({
+          key: 'login_failed',
+          message: hasUserErrors.message,
+          type: 'danger',
+          title: 'Login Failed.'
+        });
+
+        // error.login = hasUserErrors.message;
         return;
       }
-      success.login = 'You have successfully logged in to this website';
+      sendNotification({
+        key: 'login_sucess',
+        message: 'You have successfully logged in to this website',
+        type: 'success',
+        title: 'Login Success.'
+      });
+      // success.login = 'You have successfully logged in to this website';
       handleForm();
       getUserCartData('en');
     };
@@ -383,8 +396,6 @@ export default {
 
     return {
       form,
-      error,
-      success,
       userError,
       loading,
       createAccount,

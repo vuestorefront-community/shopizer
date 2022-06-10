@@ -29,3 +29,13 @@ export async function register(context: Context, body: any): Promise<object> {
     return {code: 400, message: 'Registering customer already exist', data: error};
   }
 }
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export async function getProfileData(context: Context, token: any): Promise<object> {
+  try {
+    const url = new URL('api/v1/auth/customer/profile', context.config.api.url);
+    const { data } = await context.client.get(url.href, { headers: { Authorization: `Bearer ${token}` } });
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+}
