@@ -13,7 +13,7 @@ export async function getFeaturedItems(context: Context): Promise<object> {
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export async function getProductDetails(context: Context, params: any): Promise<object> {
   try {
-    const url = new URL(`api/v1/products/${params.id}?store=${context.config.store}&lang=${params.currentLanguageCode}`, context.config.api.url);
+    const url = new URL(`api/v2/product/${params.sku}?store=${context.config.store}&lang=${params.currentLanguageCode}`, context.config.api.url);
     const { data } = await context.client.get(url.href);
     return data;
   } catch (error) {

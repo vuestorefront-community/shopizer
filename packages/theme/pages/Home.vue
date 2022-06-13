@@ -65,7 +65,7 @@
               :max-rating="5"
               :score-rating="product.rating"
               wishlistIcon=""
-              :link="localePath(`/p/${product.id}/${product.description.friendlyUrl}`)"
+              :link="localePath(`/p/${product.sku}/${product.description.friendlyUrl}`)"
               class="carousel__item__product"
               @click:add-to-cart="addItemToCart({ product, quantity: 1, customQuery: cartItem})"
             />

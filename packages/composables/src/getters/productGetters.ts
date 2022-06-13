@@ -45,12 +45,12 @@ function getFiltered(products: any): Product[] {
 function getAttributes(products: any | Product): Record<string, AgnosticAttribute | string> {
   return {
     properties: products?.properties || [],
-    radioOptions: products?.options ? products?.options.filter((option) => {
-      return option.type === 'radio';
-    }) : [],
-    selectOptions: products?.options ? products?.options.filter((option) => {
-      return option.type === 'select';
-    }) : [],
+    radioOptions: products?.variants?.length > 0 ? products?.variants.filter((option, index, self) => {
+      return self.map(x => x.variantValue.optionValue.code).indexOf(option.variantValue.optionValue.code) === index;
+    }).map(item => item.variantValue) : [],
+    selectOptions: products?.variants?.length > 0 ? products?.variants.filter((option, index, self) => {
+      return self.map(x => x.variant.optionValue.code).indexOf(option.variant.optionValue.code) === index;
+    }).map(item => item.variant) : [],
     weight: products?.productSpecifications?.weight || '',
     length: products?.productSpecifications?.length || '',
     width: products?.productSpecifications?.width || '',
@@ -74,6 +74,11 @@ function getId(product: any): string {
   return product?.id || 0;
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function getSku(product: any): string {
+  return product?.sku || 0;
+}
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getFormattedPrice(price: number): string {
   return '';
@@ -89,6 +94,11 @@ function getAverageRating(product: any): number {
   return product?.rating || 0;
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function getQuantity(product: any): number {
+  return product?.quantity || 0;
+}
+
 export const productGetters: ProductGetters<Product, ProductFilter> = {
   getName,
   getSlug,
@@ -102,5 +112,7 @@ export const productGetters: ProductGetters<Product, ProductFilter> = {
   getId,
   getFormattedPrice,
   getTotalReviews,
-  getAverageRating
+  getAverageRating,
+  getSku,
+  getQuantity
 };

@@ -110,7 +110,7 @@
               :max-rating="5"
               :score-rating="productGetters.getAverageRating(product)"
               wishlistIcon=""
-              :link="localePath(`/p/${productGetters.getId(product)}/${productGetters.getSlug(product)}`)"
+              :link="localePath(`/p/${productGetters.getSku(product)}/${productGetters.getSlug(product)}`)"
               class="products__product-card"
               @click:add-to-cart="addToCart({ cartItem, product, quantity: 1 })"
             />
@@ -137,7 +137,7 @@
               :score-rating="productGetters.getAverageRating(product)"
               :addToCartDisabled="product.available || product.canBePurchased || product.visible || product.quantity > 0"
               wishlistIcon=""
-              :link="localePath(`/p/${productGetters.getId(product)}/${productGetters.getSlug(product)}`)"
+              :link="localePath(`/p/${productGetters.getSku(product)}/${productGetters.getSlug(product)}`)"
               @input="productsQuantity[product._id] = $event"
               @click:add-to-cart="addToCart({ cartItem, product, quantity: Number(productsQuantity[product._id]) })"
             >

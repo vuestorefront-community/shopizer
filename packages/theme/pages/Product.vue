@@ -55,31 +55,37 @@
           <!-- <SfButton class="sf-button--text desktop-only product__guide">
             {{ $t('Size guide') }}
           </SfButton> -->
+          <p class="product__description desktop-only">
+            Available Quantity: {{productGetters.getQuantity(product)}}
+          </p>
           <SfSelect
             v-e2e="'size-select'"
             value=""
             v-if="properties.selectOptions.length > 0"
-            :label="properties.selectOptions[0].name"
+            :label="properties.selectOptions[0].option.name"
             class="sf-select--underlined product__select-size"
+            valid
             :required="true"
+            placeholder="Select Option"
           >
             <SfSelectOption
-              v-for="size in properties.selectOptions[0].optionValues"
-              :key="size.code"
-              :value="size.code"
+              v-for="(size, i) in properties.selectOptions"
+              :key="i"
+              :value="size.optionValue.code"
+              @click="updateFilter({ color: size.optionValue.code })"
             >
-              {{size.description.name}}
+              {{size.optionValue.name}}
             </SfSelectOption>
           </SfSelect>
           <div v-if="properties.radioOptions.length > 0" class="product__colors desktop-only">
-            <p class="product__color-label">{{ properties.radioOptions[0].name }}:</p>
-            <SfColor
-              v-for="(color, i) in properties.radioOptions[0].optionValues"
+            <p class="product__color-label">{{ properties.radioOptions[0].option.name }}:</p>
+            <SfRadio
+              v-for="(color, i) in properties.radioOptions"
               :key="i"
-              :color="color.code"
-
+              :value="color.optionValue.code"
+              :label="color.optionValue.name"
               class="product__color"
-              @click="updateFilter({ color: color.code })"
+              @change="updateFilter({ size: color.optionValue.code })"
             />
           </div>
           <SfAddToCart
@@ -218,7 +224,8 @@ import {
   SfBreadcrumbs,
   SfButton,
   SfColor,
-  SfLoader
+  SfLoader,
+  SfRadio
 } from '@storefront-ui/vue';
 
 import InstagramFeed from '~/components/InstagramFeed.vue';
@@ -244,8 +251,8 @@ export default {
     const id = computed(() => route.value.params.id);
     const cartItem = computed(() => cartGetters.getItems(cart.value));
     onSSR(async () => {
-      await search({ id: id.value, currentLanguageCode: 'en' });
-      await searchReviews({ productId: id.value });
+      await search({ sku: id.value, currentLanguageCode: 'en' });
+      await searchReviews({ productSku: id.value });
     });
 
     const product = computed(() => productGetters.getFiltered(products.value));
@@ -318,7 +325,8 @@ export default {
     RelatedProducts,
     LazyHydrate,
     AddProductReview,
-    SfLoader
+    SfLoader,
+    SfRadio
   }
 };
 </script>
