@@ -71,7 +71,7 @@ export default {
     const route = useRoute();
     const router = useRouter();
 
-    const { logout } = useUser();
+    const { logout, user, load: loadUser } = useUser();
     const { userCartData } = useContent();
     const { load, cart, addItem: addItemToCart } = useCart();
     const isMobile = computed(() => mapMobileObserver().isMobile.get());
@@ -114,6 +114,9 @@ export default {
       router.push(localeTransformedPath);
     };
 
+    if (user?.value?.data) {
+      loadUser(context);
+    }
     onBeforeUnmount(() => {
       unMapMobileObserver();
     });

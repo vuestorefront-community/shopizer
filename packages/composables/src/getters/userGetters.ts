@@ -21,9 +21,21 @@ function getEmailAddress(user: User): string {
   return '';
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function getAuthenticated(user: User): any {
+  return user;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function getUserData(user: User): any {
+  return user;
+}
+
 export const userGetters: UserGetters<User> = {
   getFirstName,
   getLastName,
   getFullName,
-  getEmailAddress
+  getEmailAddress,
+  getAuthenticated,
+  getUserData
 };

@@ -4,10 +4,10 @@
       <div class="checkout__main">
         <SfSteps :active="currentStep" @change="updateStep($event)">
           <SfStep name="Details">
-            <SfPersonalDetails
+            <!-- <SfPersonalDetails
               :value="personalDetails"
               @input="personalDetails = $event"
-              buttonText="Log into your account"
+              :buttonText="logInButtonText"
               logInInfo="or fill the details below:"
               headingTitle="Personal details"
               :headingTitleLevel="2"
@@ -17,14 +17,44 @@
               transition="sf-fade"
               createAccountCheckboxLabel="I want to create an account"
               createAccountInputLabel="Create Password"
-            />
+              @log-in="logInUser(personalDetails)"
+            /> -->
+            <div id="form-template">
+            <form class="form sf-personal-details" data-v-6c22c3b3="" data-v-9e2f90d0="" @submit="detailsSubmit">
+              <div class="log-in" v-if="!isAuthenticated" data-v-6c22c3b3="">
+                <button @click="logInUser" data-testid="login-button" class="log-in__button sf-button--full-width color-secondary sf-button" data-v-6c22c3b3="">{{logInButtonText}}</button>
+                <p class="log-in__info" data-v-6c22c3b3="">or fill the details below:</p>
+              </div>
+              <div class="sf-heading--left sf-heading--no-underline title sf-heading" data-v-6c22c3b3="">
+                <h2 class="sf-heading__title h2" data-v-6c22c3b3=""> Personal details </h2>
+                <div class="sf-heading__description display-none" data-v-6c22c3b3=""></div>
+              </div>
+              <ProfileDetails
+                :firstName="personalDetails.firstName"
+                :lastName="personalDetails.lastName"
+                :email="personalDetails.email"
+                :password="personalDetails.password"
+                :isAuthenticated="isAuthenticated"
+                v-on:inputFirstName="personalDetails.firstName = $event"
+                v-on:inputLastName="personalDetails.lastName = $event"
+                v-on:inputEmail="personalDetails.email = $event"
+                v-on:inputPassword="personalDetails.password = $event"
+               />
+              <div class="actions form__action">
+                <SfButton
+                  type="submit"
+                  class="sf-button--full-width actions__button"
+                  data-testid="next-button"
+                  >{{ steps[currentStep] }}</SfButton
+                >
+              </div>
+            </form>
+            </div>
           </SfStep>
           <SfStep name="Shipping">
-            <SfShipping
-              :value="shipping"
-              :shipping-methods="shippingMethods"
-              :countries="['Austria', 'Azerbaijan']"
-              @input="shipping = $event"
+            <ShippingMethodDetails
+            :currentStep="steps[currentStep]"
+            v-on:submitShippingForm="submitShippingForm"
             />
           </SfStep>
           <SfStep name="Payment">
@@ -36,6 +66,14 @@
               :years="['2020', '2021', '2022']"
               @input="payment = $event"
             />
+            <div class="actions">
+              <SfButton
+                class="sf-button--full-width actions__button"
+                data-testid="next-button"
+                @click="currentStep++"
+                >{{ steps[currentStep] }}</SfButton
+              >
+            </div>
           </SfStep>
           <SfStep name="Review" v-if="cartData">
             <div data-v-68eea69a="" data-v-9e2f90d0="" class="sf-confirm-order">
@@ -98,8 +136,8 @@
                 <div data-v-68eea69a="" data-testid="terms" class="sf-checkbox sf-confirm-order__totals-terms">
                   <label class="sf-checkbox__container">
                     <input type="checkbox" name="terms" class="sf-checkbox__input" value="">
-                    <span class="sf-checkbox__checkmark">
-                      <span class="sf-icon color-white display-none">
+                    <span class="sf-checkbox__checkmark is-active">
+                      <span class="sf-icon color-white">
                         <svg viewBox="0 0 24 24" preserveAspectRatio="none" class="sf-icon-path">
                           <defs class="">
                             <linearGradient id="linearGradient-271" x1="0" y1="0" x2="1" y2="0">
@@ -120,17 +158,19 @@
                 </div>
               </div>
             </div>
+            <div class="actions">
+              <SfButton
+                class="sf-button--full-width actions__button"
+                data-testid="next-button"
+                @click="currentStep++"
+                >{{ steps[currentStep] }}</SfButton
+              >
+            </div>
           </SfStep>
         </SfSteps>
       </div>
     </div>
     <div class="actions">
-      <SfButton
-        class="sf-button--full-width actions__button"
-        data-testid="next-button"
-        @click="currentStep++"
-        >{{ steps[currentStep] }}</SfButton
-      >
       <SfButton
         class="
           sf-button--full-width sf-button--underlined
@@ -152,24 +192,44 @@ import {
   SfPayment,
   SfConfirmOrder,
   SfOrderSummary,
-  SfOrderReview
+  SfOrderReview,
+  SfInput
 } from '@storefront-ui/vue';
-import { useCart, cartGetters, useContent } from '@vue-storefront/shopizer';
+import { useCart, cartGetters, useContent, useUser, userGetters } from '@vue-storefront/shopizer';
 import { computed } from '@nuxtjs/composition-api';
+import { useUiState } from '~/composables';
+import ProfileDetails from '~/components/Checkout/ProfileDetails';
+import ShippingMethodDetails from '~/components/Checkout/ShippingMethodDetails';
+
 export default {
   name: 'Checkout',
   setup() {
     const { cart } = useCart();
     const { getShippingQuote, shippingQuote } = useContent();
-
+    const { toggleLoginModal } = useUiState();
+    const { isAuthenticated, user } = useUser();
     const cartData = computed(() => cartGetters.getItems(cart.value));
+    console.log('%c user -> ', 'font-size: 30px;', user);
+    const userData = computed(() => userGetters.getUserData(user.value));
     if (typeof window !== 'undefined') {
       getShippingQuote({ cartId: localStorage.getItem('cartId') });
     }
-    console.log(shippingQuote);
+    console.log('shippingQuote', shippingQuote);
+
+    const logInUser = (e) => {
+      e.preventDefault();
+      if (isAuthenticated.value === false) {
+        toggleLoginModal();
+      }
+    };
+
     return {
       cartData,
-      cartGetters
+      cartGetters,
+      logInUser,
+      isAuthenticated,
+      userData,
+      user
     };
   },
   components: {
@@ -180,7 +240,10 @@ export default {
     SfConfirmOrder,
     SfOrderSummary,
     SfOrderReview,
-    SfButton
+    SfButton,
+    SfInput,
+    ProfileDetails,
+    ShippingMethodDetails
   },
   data() {
     return {
@@ -194,7 +257,12 @@ export default {
         'Pay for order',
         'Confirm and pay'
       ],
-      personalDetails: { firstName: '', lastName: '', email: '' },
+      personalDetails: {
+        firstName: this.isAuthenticated ? this.userData.firstName : '',
+        lastName: this.isAuthenticated ? this.userData.lastName : '',
+        email: this.isAuthenticated ? this.userData.emailAddress : '',
+        password: ''
+      },
       shipping: {
         firstName: '',
         lastName: '',
@@ -310,7 +378,9 @@ export default {
         { name: 'Go to payment' },
         { name: 'Review Order' },
         { name: 'Place my order' }
-      ]
+      ],
+      logInButtonText: 'Log into your account',
+      shippingSubmittedData: {}
     };
   },
   watch: {
@@ -323,6 +393,21 @@ export default {
           ? (newVal.shippingMethod = method)
           : (newVal.shippingMethod = { price: '$0.00' });
       }
+    },
+    isAuthenticated(nV) {
+      if (nV === true) {
+        this.logInButtonText = 'Logged in';
+      }
+    },
+    userData(nV) {
+      this.personalDetails = {
+        firstName: nV.firstName,
+        lastName: nV.lastName,
+        email: nV.emailAddress
+      };
+    },
+    user(nv, ov) {
+      console.log(nv, ov);
     }
   },
   methods: {
@@ -331,6 +416,19 @@ export default {
       if (next < this.currentStep) {
         this.currentStep = next;
       }
+    },
+    detailsSubmit(e) {
+      e.preventDefault();
+      const nextStep = this.currentStep;
+      this.currentStep = nextStep + 1;
+    },
+    createAccCheckbox(e) {
+      this.createAccountCheck = e.target.checked;
+    },
+    submitShippingForm(data) {
+      this.shippingSubmittedData = data;
+      const nextStep = this.currentStep;
+      this.currentStep = nextStep + 1;
     }
   }
 };
