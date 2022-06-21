@@ -54,26 +54,20 @@
           <SfStep name="Shipping">
             <ShippingMethodDetails
             :currentStep="steps[currentStep]"
+            :countriesList="countriesList"
+            :statesList="statesList"
             v-on:submitShippingForm="submitShippingForm"
+            v-on:setStateListCountry="setStateListCountry"
             />
           </SfStep>
           <SfStep name="Payment">
-            <SfPayment
-              :payment-methods="paymentMethods"
-              :shipping="shipping"
-              :countries="['Austria', 'Azerbaijan']"
-              :months="['Jan', 'Feb', 'March']"
-              :years="['2020', '2021', '2022']"
-              @input="payment = $event"
+            <PaymentBillingDetails
+            :shippingData="shippingSubmittedData"
+            :currentStep="steps[currentStep]"
+            :countriesList="countriesList"
+            :statesList="statesList"
+            v-on:submitPaymentForm="submitPaymentForm"
             />
-            <div class="actions">
-              <SfButton
-                class="sf-button--full-width actions__button"
-                data-testid="next-button"
-                @click="currentStep++"
-                >{{ steps[currentStep] }}</SfButton
-              >
-            </div>
           </SfStep>
           <SfStep name="Review" v-if="cartData">
             <div data-v-68eea69a="" data-v-9e2f90d0="" class="sf-confirm-order">
@@ -200,21 +194,28 @@ import { computed } from '@nuxtjs/composition-api';
 import { useUiState } from '~/composables';
 import ProfileDetails from '~/components/Checkout/ProfileDetails';
 import ShippingMethodDetails from '~/components/Checkout/ShippingMethodDetails';
+import PaymentBillingDetails from '~/components/Checkout/PaymentBillingDetails';
+import { onSSR } from '@vue-storefront/core';
 
 export default {
   name: 'Checkout',
   setup() {
     const { cart } = useCart();
-    const { getShippingQuote, shippingQuote } = useContent();
+    const { getShippingQuote, shippingQuote, getCountry, countryData, getState, stateData} = useContent();
     const { toggleLoginModal } = useUiState();
     const { isAuthenticated, user } = useUser();
+    onSSR(async () => {
+      await Promise.all([
+        getCountry({ currentLanguageCode: 'en' })
+      ]);
+    });
     const cartData = computed(() => cartGetters.getItems(cart.value));
-    console.log('%c user -> ', 'font-size: 30px;', user);
     const userData = computed(() => userGetters.getUserData(user.value));
+    const shipCountryData = computed(() => countryData.value);
     if (typeof window !== 'undefined') {
       getShippingQuote({ cartId: localStorage.getItem('cartId') });
     }
-    console.log('shippingQuote', shippingQuote);
+    console.log('shippingQuote', shippingQuote, countryData.value);
 
     const logInUser = (e) => {
       e.preventDefault();
@@ -223,14 +224,26 @@ export default {
       }
     };
 
+    const setStateListCountry = (country) => {
+      getState(country);
+    };
+    const StateData = computed(() => stateData.value);
+
     return {
       cartData,
       cartGetters,
       logInUser,
       isAuthenticated,
       userData,
-      user
+      shipCountryData,
+      setStateListCountry,
+      StateData
     };
+  },
+  mounted() {
+    if (this.shipCountryData.length > 0) {
+      this.countriesList = [...this.shipCountryData];
+    }
   },
   components: {
     SfSteps,
@@ -243,13 +256,11 @@ export default {
     SfButton,
     SfInput,
     ProfileDetails,
-    ShippingMethodDetails
+    ShippingMethodDetails,
+    PaymentBillingDetails
   },
   data() {
     return {
-      // countries,
-      // months,
-      // years,
       currentStep: 0,
       steps: [
         'Go to shipping',
@@ -276,26 +287,6 @@ export default {
         shippingMethod: {
           price: '$0.00'
         }
-      },
-      payment: {
-        sameAsShipping: false,
-        firstName: '',
-        lastName: '',
-        streetName: '',
-        apartment: '',
-        city: '',
-        state: '',
-        zipCode: '',
-        country: '',
-        phoneNumber: '',
-        paymentMethod: '',
-        invoice: false,
-        cardNumber: '',
-        cardHolder: '',
-        cardMonth: '',
-        cardYear: '',
-        cardCVC: '',
-        cardKeep: false
       },
       order: {
         password: '',
@@ -380,7 +371,10 @@ export default {
         { name: 'Place my order' }
       ],
       logInButtonText: 'Log into your account',
-      shippingSubmittedData: {}
+      shippingSubmittedData: {},
+      paymentSubmittedData: {},
+      countriesList: [],
+      statesList: []
     };
   },
   watch: {
@@ -406,8 +400,9 @@ export default {
         email: nV.emailAddress
       };
     },
-    user(nv, ov) {
-      console.log(nv, ov);
+    StateData(nV, oV) {
+      console.log('state data', nV, oV);
+      this.statesList = [...nV];
     }
   },
   methods: {
@@ -429,6 +424,14 @@ export default {
       this.shippingSubmittedData = data;
       const nextStep = this.currentStep;
       this.currentStep = nextStep + 1;
+    },
+    submitPaymentForm(data) {
+      this.paymentSubmittedData = data;
+      const nextStep = this.currentStep;
+      this.currentStep = nextStep + 1;
+    },
+    submit() {
+      console.log('submit');
     }
   }
 };

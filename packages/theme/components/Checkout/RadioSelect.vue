@@ -8,7 +8,7 @@
         style="outline: none"
         v-model="method.value"
         required
-        @change="selectValue"
+        @click="selectValue"
       />
       <span class="sf-radio__checkmark sf-radio__checkmark" :class="method.selected ? 'is-active': ''"></span>
       <span class="sf-radio__content"

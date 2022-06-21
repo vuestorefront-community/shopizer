@@ -71,11 +71,11 @@
         @blur="stateBlur = false"
       >
         <SfComponentSelectOption
-          v-for="stateOption in states"
-          :key="stateOption"
-          :value="stateOption"
+          v-for="(stateOption, index) in statesList"
+          :key="index"
+          :value="stateOption.code"
         >
-          {{ stateOption }}
+          {{ stateOption.name }}
         </SfComponentSelectOption>
       </SfComponentSelect>
       <SfInput
@@ -105,13 +105,14 @@
         :valid="countryBlur || validCountry(shippingData.country)"
         error-message="Please choose your country."
         @blur="countryBlur = false"
+        @change="onCountrySelect"
       >
         <SfComponentSelectOption
-          v-for="countryOption in countries"
-          :key="countryOption"
-          :value="countryOption"
+          v-for="(countryOption, index) in countriesList"
+          :key="index"
+          :value="countryOption.code"
         >
-          {{ countryOption }}
+          {{ countryOption.name}}
         </SfComponentSelectOption>
       </SfComponentSelect>
       <SfInput
@@ -160,7 +161,9 @@ import RadioSelect from './RadioSelect';
 export default {
   name: 'ShippingMethodDetails',
   props: {
-    currentStep: String
+    currentStep: String,
+    countriesList: Array,
+    statesList: Array
   },
   components: {
     SfInput,
@@ -318,6 +321,11 @@ export default {
           item.selected = false;
         }
       });
+    },
+    onCountrySelect(v) {
+      if (v && v !== '') {
+        this.$emit('setStateListCountry', v);
+      }
     }
   }
 };
