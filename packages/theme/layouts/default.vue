@@ -78,8 +78,8 @@ export default {
 <style lang="scss">
 @import "~@storefront-ui/vue/styles";
 #app{
-  --c-primary: #0284fe;
-  --c-primary-variant: #709ec9;
+  --c-primary: #d50003;
+  --c-primary-variant: #f54d4e
 }
 #layout {
   box-sizing: border-box;
