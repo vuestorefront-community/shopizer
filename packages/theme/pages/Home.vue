@@ -14,7 +14,7 @@
       </SfHero>
     </LazyHydrate>
 
-    <!-- <LazyHydrate when-visible>
+    <LazyHydrate when-visible>
       <SfBannerGrid :banner-grid="1" class="banner-grid">
         <template v-for="item in banners" v-slot:[item.slot]>
           <SfBanner
@@ -29,16 +29,16 @@
           />
         </template>
       </SfBannerGrid>
-    </LazyHydrate> -->
+    </LazyHydrate>
 
-    <!-- <LazyHydrate when-visible>
+    <LazyHydrate when-visible>
       <div class="similar-products">
         <SfHeading title="Featured Products" :level="2"/>
-        <nuxt-link :to="localePath('/c/women')" class="smartphone-only">
+        <!-- <nuxt-link :to="localePath('/c/women')" class="smartphone-only">
           {{ $t('See all') }}
-        </nuxt-link>
+        </nuxt-link> -->
       </div>
-    </LazyHydrate> -->
+    </LazyHydrate>
 
     <LazyHydrate when-visible>
         <SfCarousel class="carousel" :settings="{ peek: 16, breakpoints: { 1023: { peek: 0, perView: 2 } } }">
@@ -99,9 +99,9 @@
       <NewsletterModal @email-submitted="onSubscribe" />
     </LazyHydrate>
 
-    <LazyHydrate when-visible>
+    <!-- <LazyHydrate when-visible>
       <InstagramFeed />
-    </LazyHydrate>
+    </LazyHydrate> -->
 
   </div>
 </template>
