@@ -15,3 +15,15 @@ export async function getShippingQuote(context: Context, params: any): Promise<o
     console.log(error);
   }
 }
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export async function getShippingOptions(context: Context, params: any): Promise<object> {
+  try {
+    const url = new URL(`api/v1/cart/${params.cartId}/shipping`, context.config.api.url);
+    const reqParams = { postalCode: params.postalCode, countryCode: params.countryCode };
+    const { data } = await context.client.post(url.href, reqParams);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+}

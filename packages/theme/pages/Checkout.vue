@@ -201,7 +201,7 @@ export default {
   name: 'Checkout',
   setup() {
     const { cart } = useCart();
-    const { getShippingQuote, shippingQuote, getCountry, countryData, getState, stateData} = useContent();
+    const { getShippingQuote, shippingQuote, getCountry, countryData, getState, stateData, getShippingOptions, shippingOptions} = useContent();
     const { toggleLoginModal } = useUiState();
     const { isAuthenticated, user } = useUser();
     onSSR(async () => {
@@ -214,8 +214,9 @@ export default {
     const shipCountryData = computed(() => countryData.value);
     if (typeof window !== 'undefined') {
       getShippingQuote({ cartId: localStorage.getItem('cartId') });
+      getShippingOptions({ cartId: localStorage.getItem('cartId'), postalCode: 'R8A', countryCode: 'CA' });
     }
-    console.log('shippingQuote', shippingQuote, countryData.value);
+    console.log('shippingQuote', shippingQuote, shippingOptions);
 
     const logInUser = (e) => {
       e.preventDefault();

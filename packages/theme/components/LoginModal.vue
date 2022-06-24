@@ -113,7 +113,7 @@
             <ValidationProvider rules="required|email" v-slot="{ errors }">
               <SfInput
                 v-e2e="'login-modal-email'"
-                v-model="form.email"
+                v-model="formReg.email"
                 :valid="!errors[0]"
                 :errorMessage="errors[0]"
                 name="email"
@@ -124,7 +124,7 @@
             <ValidationProvider rules="required" v-slot="{ errors }">
               <SfInput
                 v-e2e="'login-modal-firstName'"
-                v-model="form.firstName"
+                v-model="formReg.firstName"
                 :valid="!errors[0]"
                 :errorMessage="errors[0]"
                 name="first-name"
@@ -135,7 +135,7 @@
             <ValidationProvider rules="required" v-slot="{ errors }">
               <SfInput
                 v-e2e="'login-modal-lastName'"
-                v-model="form.lastName"
+                v-model="formReg.lastName"
                 :valid="!errors[0]"
                 :errorMessage="errors[0]"
                 name="last-name"
@@ -146,7 +146,7 @@
             <ValidationProvider rules="required" v-slot="{ errors }">
               <SfInput
                 v-e2e="'login-modal-password'"
-                v-model="form.password"
+                v-model="formReg.password"
                 :valid="!errors[0]"
                 :errorMessage="errors[0]"
                 name="password"
@@ -162,8 +162,8 @@
                   label="Country"
                   :valid="!errors[0]"
                   :errorMessage="errors[0]"
-                  v-model="form.country"
-                  @input="getState(form.country)"
+                  v-model="formReg.country"
+                  @input="getState(formReg.country)"
                 >
                   <SfSelectOption v-for="(country, i) in shipCountryData" :key="i" :value="country.code">{{country.name}}</SfSelectOption>
                 </SfSelect>
@@ -175,7 +175,7 @@
                   label="State"
                   :valid="!errors[0]"
                   :errorMessage="errors[0]"
-                  v-model="form.state"
+                  v-model="formReg.state"
                 >
                   <SfSelectOption v-for="(state, i) in shipStateData" :key="i" :value="state.code">{{state.name}}</SfSelectOption>
                 </SfSelect>
@@ -253,6 +253,7 @@ export default {
 
     const { isLoginModalOpen, toggleLoginModal } = useUiState();
     const form = ref({});
+    const formReg = ref({});
     const userEmail = ref('');
     const createAccount = ref(false);
     const rememberMe = ref(false);
@@ -328,16 +329,16 @@ export default {
     const handleRegister = async () => {
       resetErrorValues();
       const param = {
-        userName: form.value.email,
-        password: form.value.password,
-        emailAddress: form.value.email,
+        userName: formReg.value.email,
+        password: formReg.value.password,
+        emailAddress: formReg.value.email,
         gender: 'M',
         language: 'en',
         billing: {
-          country: form.value.country,
-          stateProvince: form.value.state,
-          firstName: form.value.firstName,
-          lastName: form.value.lastName
+          country: formReg.value.country,
+          stateProvince: formReg.value.state,
+          firstName: formReg.value.firstName,
+          lastName: formReg.value.lastName
         }
       };
       await register({ user: param });
@@ -396,6 +397,7 @@ export default {
 
     return {
       form,
+      formReg,
       userError,
       loading,
       createAccount,

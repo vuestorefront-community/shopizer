@@ -117,7 +117,7 @@ import {
   mapMobileObserver,
   unMapMobileObserver
 } from '@storefront-ui/vue/src/utilities/mobile-observer.js';
-import debounce from 'lodash.debounce';
+// import debounce from 'lodash.debounce';
 import mockedSearchProducts from '../mockedSearchProducts.json';
 import { addBasePath } from '@vue-storefront/core';
 
@@ -173,7 +173,7 @@ export default {
       isSearchOpen.value = false;
     };
 
-    const handleSearch = debounce(async (paramValue) => {
+    const handleSearch = async (paramValue) => {
       if (!paramValue.target) {
         term.value = paramValue;
       } else {
@@ -181,7 +181,7 @@ export default {
       }
       result.value = mockedSearchProducts;
 
-    }, 1000);
+    };
 
     const closeOrFocusSearchBar = () => {
       if (isMobile.value) {
@@ -261,7 +261,7 @@ export default {
 
 .cart-badge {
   position: absolute;
-  bottom: 40%;
+  bottom: 60%;
   left: 40%;
 }
 </style>

@@ -103,6 +103,7 @@ html {
 }
 body {
   overflow-x: hidden;
+  overflow-y: overlay;
   color: var(--c-text);
   font-size: var(--font-size--base);
   font-family: var(--font-family--primary);
@@ -145,5 +146,8 @@ input:focus {
 }
 select:focus {
   outline: none;
+}
+.notifications .sf-notification .sf-notification__message {
+  margin-right: 25px;
 }
 </style>

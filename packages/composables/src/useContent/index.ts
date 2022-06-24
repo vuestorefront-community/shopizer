@@ -14,6 +14,7 @@ export const useContent = (): any => {
   const stateData = sharedRef(null, 'state');
   const userCartData = sharedRef(null, 'userCartData');
   const shippingQuote = sharedRef(null, 'shippingQuote');
+  const shippingOptions = sharedRef(null, 'shippingOptions');
 
   const getCategoryHierarchy = async(params: any) => {
     console.log('load: getCategoryHierarchy');
@@ -81,6 +82,13 @@ export const useContent = (): any => {
     shippingQuote.value = quoteData;
     return quoteData;
   };
+
+  const getShippingOptions = async (params: any) => {
+    console.log('Mocked: useFacet.getShippingOptions', params);
+    const optionData: any = await context.$shopizer.api.getShippingOptions(params);
+    shippingOptions.value = optionData;
+    return optionData;
+  };
   return {
     getCategoryHierarchy,
     getContent,
@@ -92,6 +100,7 @@ export const useContent = (): any => {
     getState,
     getUserCartData,
     getShippingQuote,
+    getShippingOptions,
     categoryData: computed(() => categoryresult.value),
     contentData: computed(() => contentresult.value),
     featuredItemData: computed(() => featureItemResult.value),
@@ -101,6 +110,7 @@ export const useContent = (): any => {
     countryData: computed(() => countryData.value),
     stateData: computed(() => stateData.value),
     userCartData: computed(() => userCartData.value),
-    shippingQuote: computed(() => shippingQuote.value)
+    shippingQuote: computed(() => shippingQuote.value),
+    shippingOptions: computed(() => shippingOptions.value)
   };
 };

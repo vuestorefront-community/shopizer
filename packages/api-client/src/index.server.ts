@@ -6,7 +6,7 @@ import { getFeaturedItems, getProductDetails, getProductList, getManufacturers, 
 import { addToCart, getCart, deleteFromCart, getUserCartData } from './Cart/Cart';
 import { login, forgotPassword, register, getProfileData } from './Users/Users';
 import { getCountry, getState} from './Comman/Comman';
-import { getShippingQuote } from './Checkout/Checkout';
+import { getShippingQuote, getShippingOptions } from './Checkout/Checkout';
 import { getReviews, addReview } from './Reviews/Reviews';
 import axios from 'axios';
 
@@ -44,7 +44,8 @@ const { createApiClient } = apiClientFactory<Setttings, Endpoints>({
     getShippingQuote,
     getReviews,
     addReview,
-    getProfileData
+    getProfileData,
+    getShippingOptions
   }
 });
 

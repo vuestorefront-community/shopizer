@@ -14,7 +14,7 @@ function getName(product: any): string {
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function getSlug(product: any): string {
-  return product?.description.friendlyUrl || '/';
+  return product?.description?.friendlyUrl || product._slug || '/';
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types

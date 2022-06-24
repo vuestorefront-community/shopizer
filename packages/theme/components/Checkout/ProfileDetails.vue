@@ -152,7 +152,7 @@ export default {
     },
     validEmail(email) {
       const regex = /(.+)@(.+){2,}\.(.+){2,}/;
-      return regex.test(email.toLowerCase());
+      return regex.test(email?.toLowerCase());
     }
   }
 };

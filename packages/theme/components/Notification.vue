@@ -52,6 +52,9 @@ export default {
     right: 5%;
     width: 320px;
   }
+  .sf-notification__message {
+    margin-right: 25px;
+  }
 }
 .sf-notification {
   max-width: 100%;
