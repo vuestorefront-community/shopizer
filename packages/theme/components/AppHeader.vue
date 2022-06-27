@@ -88,6 +88,9 @@
                 <SfIcon color="var(--c-text)" size="20px" icon="search" />
               </span>
             </SfButton>
+            <SfList :class="isAutocompleteOpen ? 'list-visible' : 'list-hidden'">
+              <p class="list-item" v-for="(item, index) in autocompleteData" :key="`index-${index}`" :name="item" @click="selectFromAutocomplete(item)">{{item}}</p>
+            </SfList>
           </template>
         </SfSearchBar>
       </template>
@@ -104,9 +107,9 @@
 </template>
 
 <script>
-import { SfHeader, SfImage, SfIcon, SfButton, SfBadge, SfSearchBar, SfOverlay } from '@storefront-ui/vue';
+import { SfHeader, SfImage, SfIcon, SfButton, SfBadge, SfSearchBar, SfOverlay, SfList } from '@storefront-ui/vue';
 import { useUiState } from '~/composables';
-import { useCart, useUser, cartGetters, useStore, marketGetters } from '@vue-storefront/shopizer';
+import { useCart, useUser, cartGetters, useStore, marketGetters, useContent } from '@vue-storefront/shopizer';
 import { computed, ref, watch, onBeforeUnmount, useRouter } from '@nuxtjs/composition-api';
 import { useUiHelpers } from '~/composables';
 import LocaleSelector from './LocaleSelector';
@@ -132,7 +135,8 @@ export default {
     SfSearchBar,
     SearchResults,
     SfOverlay,
-    HeaderNavigation
+    HeaderNavigation,
+    SfList
   },
   directives: { clickOutside },
   setup(props, { root }) {
@@ -142,9 +146,12 @@ export default {
     const { isAuthenticated } = useUser();
     const { response } = useStore();
     const { cart } = useCart();
+    const { searchAutocomplete, resultAuto } = useContent();
     const term = ref(getFacetsFromURL().phrase);
     const isSearchOpen = ref(false);
+    const isAutocompleteOpen = ref(false);
     const searchBarRef = ref(null);
+    const autocompleteData = ref([]);
     const result = ref(null);
     const isMobile = ref(mapMobileObserver().isMobile.get());
     const cartTotalItems = computed(() => {
@@ -153,6 +160,10 @@ export default {
     });
     const marketLogo = computed(() => marketGetters.getStoreLogo(response.value));
     const accountIcon = computed(() => isAuthenticated.value ? 'profile_fill' : 'profile');
+
+    // if (typeof window !== 'undefined') {
+    //   searchAutocomplete();
+    // }
     // TODO: https://github.com/DivanteLtd/vue-storefront/issues/4927
     const handleAccountClick = () => {
       if (typeof window !== 'undefined') {
@@ -171,13 +182,23 @@ export default {
 
       term.value = '';
       isSearchOpen.value = false;
+      isAutocompleteOpen.value = false;
+      autocompleteData.value = [];
     };
 
     const handleSearch = async (paramValue) => {
       if (!paramValue.target) {
         term.value = paramValue;
+        searchAutocomplete(paramValue);
+        if (paramValue.length > 0) {
+          isAutocompleteOpen.value = true;
+        }
       } else {
         term.value = paramValue.target.value;
+        searchAutocomplete(paramValue.target.value);
+        if (paramValue.target.value.length > 0) {
+          isAutocompleteOpen.value = true;
+        }
       }
       result.value = mockedSearchProducts;
 
@@ -197,7 +218,19 @@ export default {
       if (shouldSearchBeOpened) {
         isSearchOpen.value = true;
       }
+      if (resultAuto.value?.values && resultAuto.value?.values?.length > 0 && newVal.length > 0) {
+        autocompleteData.value = resultAuto.value.values;
+      } else {
+        isAutocompleteOpen.value = false;
+        autocompleteData.value = [];
+      }
     });
+
+    const selectFromAutocomplete = (data) => {
+      term.value = data;
+      isAutocompleteOpen.value = false;
+      autocompleteData.value = [];
+    };
 
     const removeSearchResults = () => {
       result.value = null;
@@ -225,7 +258,11 @@ export default {
       isMobileMenuOpen,
       removeSearchResults,
       addBasePath,
-      marketLogo
+      marketLogo,
+      resultAuto,
+      autocompleteData,
+      isAutocompleteOpen,
+      selectFromAutocomplete
     };
   }
 };
@@ -263,5 +300,39 @@ export default {
   position: absolute;
   bottom: 60%;
   left: 40%;
+}
+.sf-search-bar {
+  .sf-list {
+    position: absolute;
+    top: 40px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    z-index: 20;
+    background: #fff;
+    border: 1px solid rgb(0 0 0 / 20%);
+    box-shadow: 0 0 25px 0 rgb(0 0 0 / 6%);
+    .list-item {
+      border-bottom: 1px solid rgb(0 0 0 / 20%);
+      padding: 10px;
+      cursor: pointer;
+      margin: 0px;
+    }
+    .list-item:hover {
+      color: var(--c-primary);
+    }
+    .list-item:last-child {
+      border-bottom: none;
+    }
+  }
+  .list-visible {
+    opacity: 1
+  }
+  .list-hidden {
+    opacity: 0
+  }
+}
+.sf-header.header-on-top {
+  z-index: 4;
 }
 </style>

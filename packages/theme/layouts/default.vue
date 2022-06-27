@@ -150,4 +150,14 @@ select:focus {
 .notifications .sf-notification .sf-notification__message {
   margin-right: 25px;
 }
+.sf-collected-product:hover {
+  @include for-desktop {
+    --collected-product-configuration-display: initial;
+  }
+}
+.collected-product__properties {
+  .sf-property__name {
+    width: max-content;
+  }
+}
 </style>

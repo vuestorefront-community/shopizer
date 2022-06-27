@@ -15,6 +15,7 @@ export const useContent = (): any => {
   const userCartData = sharedRef(null, 'userCartData');
   const shippingQuote = sharedRef(null, 'shippingQuote');
   const shippingOptions = sharedRef(null, 'shippingOptions');
+  const resultAuto = sharedRef(null, 'resultAuto');
 
   const getCategoryHierarchy = async(params: any) => {
     console.log('load: getCategoryHierarchy');
@@ -89,6 +90,16 @@ export const useContent = (): any => {
     shippingOptions.value = optionData;
     return optionData;
   };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const searchAutocomplete = async (params: any) => {
+    // console.log('Mocked: useFacet.searchAutocomplete', params);
+    const data = {count: 20, query: params, start: 0};
+    const result: any = await context.$shopizer.api.getAutocomplete(data);
+    resultAuto.value = result;
+    return resultAuto;
+  };
+
   return {
     getCategoryHierarchy,
     getContent,
@@ -101,6 +112,7 @@ export const useContent = (): any => {
     getUserCartData,
     getShippingQuote,
     getShippingOptions,
+    searchAutocomplete,
     categoryData: computed(() => categoryresult.value),
     contentData: computed(() => contentresult.value),
     featuredItemData: computed(() => featureItemResult.value),
@@ -111,6 +123,7 @@ export const useContent = (): any => {
     stateData: computed(() => stateData.value),
     userCartData: computed(() => userCartData.value),
     shippingQuote: computed(() => shippingQuote.value),
-    shippingOptions: computed(() => shippingOptions.value)
+    shippingOptions: computed(() => shippingOptions.value),
+    resultAuto: computed(() => resultAuto.value)
   };
 };

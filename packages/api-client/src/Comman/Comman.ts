@@ -20,3 +20,14 @@ export async function getState(context: Context, code: any): Promise<object> {
     // console.log(error);
   }
 }
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export async function getAutocomplete(context: Context, params: any): Promise<object> {
+  try {
+    const url = new URL('api/v1/search/autocomplete', context.config.api.url);
+    const { data } = await context.client.post(url.href, params);
+    return data;
+  } catch (error) {
+    return [];
+  }
+}

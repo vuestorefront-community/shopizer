@@ -46,10 +46,10 @@
 			<div data-v-30fc7773="" class="highlighted sf-order-summary__promo-code" v-else>
           <div data-v-30fc7773="" data-testid="promoCode" class="sf-input sf-input--filled sf-order-summary__promo-code-input">
             <div class="sf-input__wrapper">
-            <input id="promoCode" name="promoCode" type="text" class="">
+            <input id="promoCode" name="promoCode" type="text" class="promoCode-input" placeholder="Enter promo code">
             <span class="sf-input__bar"></span>
-            <label for="promoCode" class="sf-input__label">Enter promo code</label>
-            <button type="button" aria-label="switch-visibility-password" aria-pressed="false" class="display-none sf-input__password-button sf-button">
+            <!-- <label for="promoCode" class="sf-input__label">Enter promo code</label> -->
+            <!-- <button type="button" aria-label="switch-visibility-password" aria-pressed="false" class="display-none sf-input__password-button sf-button">
               <span class="sf-input__password-icon sf-icon hidden" style="--icon-size:1.5rem;">
               <svg viewBox="0 0 24 24" preserveAspectRatio="none" class="sf-icon-path">
                 <defs class="">
@@ -63,7 +63,7 @@
                 <path d="M11.974 14.43a2.57 2.57 0 002.568-2.567 2.57 2.57 0 00-3.734-2.285.41.41 0 00-.21.468l.265 1.005-.876-.188a.41.41 0 00-.478.287 2.57 2.57 0 002.465 3.28z" fill="var(--icon-color)" style="height: 100%;"></path>
               </svg>
               </span>
-            </button>
+            </button> -->
             </div>
             <div class="sf-input__error-message">
             <div class="display-none"></div>
@@ -335,6 +335,13 @@ export default {
     @include for-desktop {
       --heading-title-font-size: var(--font-size--xl);
       --heading-title-margin: 0 0 var(--spacer-sm) 0;
+    }
+  }
+}
+.sf-order-summary__promo-code {
+  .sf-input__wrapper {
+    .promoCode-input {
+      font: var(--input-label-font, var(--input-label-font-weight, var(--font-weight--normal)) var(--input-label-font-size, var(--font-size--lg))/var(--input-label-font-line-height, 1) var(--input-label-font-family, var(--font-family--secondary)));;
     }
   }
 }
