@@ -160,4 +160,10 @@ select:focus {
     width: max-content;
   }
 }
+.checkbox-card {
+  .sf-checkbox__container {
+    width: max-content;
+    max-width: max-content;
+  }
+}
 </style>

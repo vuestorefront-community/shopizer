@@ -30,15 +30,8 @@
                 <div class="sf-heading__description display-none" data-v-6c22c3b3=""></div>
               </div>
               <ProfileDetails
-                :firstName="personalDetails.firstName"
-                :lastName="personalDetails.lastName"
-                :email="personalDetails.email"
-                :password="personalDetails.password"
                 :isAuthenticated="isAuthenticated"
-                v-on:inputFirstName="personalDetails.firstName = $event"
-                v-on:inputLastName="personalDetails.lastName = $event"
-                v-on:inputEmail="personalDetails.email = $event"
-                v-on:inputPassword="personalDetails.password = $event"
+                :personalDetails="personalDetails"
                />
               <div class="actions form__action">
                 <SfButton
@@ -58,6 +51,7 @@
             :statesList="statesList"
             v-on:submitShippingForm="submitShippingForm"
             v-on:setStateListCountry="setStateListCountry"
+            :shippingSubmittedData="shippingSubmittedData"
             />
           </SfStep>
           <SfStep name="Payment">
@@ -66,6 +60,7 @@
             :currentStep="steps[currentStep]"
             :countriesList="countriesList"
             :statesList="statesList"
+            :paymentSubmittedData="paymentSubmittedData"
             v-on:submitPaymentForm="submitPaymentForm"
             />
           </SfStep>
@@ -113,7 +108,7 @@
                       sf-confirm-order__property sf-confirm-order__property-subtotal
                     sf-property">
                   <span data-v-68eea69a="" class="sf-property__name"> Subtotal </span>
-                  <span data-v-68eea69a="" class="sf-property__value"> $90.10 </span>
+                  <span data-v-68eea69a="" class="sf-property__value">{{ shippingQuote && shippingQuote.subTotal }}</span>
                 </div>
                 <div data-v-68eea69a="" class="sf-property--full-width sf-confirm-order__property sf-property">
                   <span data-v-68eea69a="" class="sf-property__name"> Shipping </span>
@@ -125,9 +120,23 @@
                       sf-confirm-order__property-total
                     sf-property">
                   <span data-v-68eea69a="" class="sf-property__name"> Total price </span>
-                  <span data-v-68eea69a="" class="sf-property__value"> $96.09 </span>
+                  <span data-v-68eea69a="" class="sf-property__value">{{ shippingQuote && shippingQuote.total }}</span>
                 </div>
-                <div data-v-68eea69a="" data-testid="terms" class="sf-checkbox sf-confirm-order__totals-terms">
+                <SfCheckbox
+                  name="terms-and-conditions"
+                  :required="false"
+                  valid
+                  class="form__element checkbox-card"
+                  :disabled="false"
+                  :selected="false"
+                  v-model="agreeTAndC"
+                >
+                <template #label>
+                  <div class="sf-checkbox__label"> I agree to <a data-v-68eea69a="" href="#" class="sf-link">Terms and conditions</a>
+                    </div>
+                </template>
+                </SfCheckbox>
+                <!-- <div data-v-68eea69a="" data-testid="terms" class="sf-checkbox sf-confirm-order__totals-terms">
                   <label class="sf-checkbox__container">
                     <input type="checkbox" name="terms" class="sf-checkbox__input" value="">
                     <span class="sf-checkbox__checkmark is-active">
@@ -149,7 +158,7 @@
                   <div class="sf-checkbox__message">
                     <div class=""></div>
                   </div>
-                </div>
+                </div> -->
               </div>
             </div>
             <div class="actions">
@@ -187,7 +196,8 @@ import {
   SfConfirmOrder,
   SfOrderSummary,
   SfOrderReview,
-  SfInput
+  SfInput,
+  SfCheckbox
 } from '@storefront-ui/vue';
 import { useCart, cartGetters, useContent, useUser, userGetters } from '@vue-storefront/shopizer';
 import { computed } from '@nuxtjs/composition-api';
@@ -216,7 +226,7 @@ export default {
       getShippingQuote({ cartId: localStorage.getItem('cartId') });
       getShippingOptions({ cartId: localStorage.getItem('cartId'), postalCode: 'R8A', countryCode: 'CA' });
     }
-    console.log('shippingQuote', shippingQuote, shippingOptions);
+    console.log('shippingOptions', shippingOptions);
 
     const logInUser = (e) => {
       e.preventDefault();
@@ -238,7 +248,8 @@ export default {
       userData,
       shipCountryData,
       setStateListCountry,
-      StateData
+      StateData,
+      shippingQuote
     };
   },
   mounted() {
@@ -258,7 +269,8 @@ export default {
     SfInput,
     ProfileDetails,
     ShippingMethodDetails,
-    PaymentBillingDetails
+    PaymentBillingDetails,
+    SfCheckbox
   },
   data() {
     return {
@@ -273,7 +285,8 @@ export default {
         firstName: this.isAuthenticated ? this.userData.firstName : '',
         lastName: this.isAuthenticated ? this.userData.lastName : '',
         email: this.isAuthenticated ? this.userData.emailAddress : '',
-        password: ''
+        password: '',
+        checkCreateAccount: false
       },
       shipping: {
         firstName: '',
@@ -375,7 +388,8 @@ export default {
       shippingSubmittedData: {},
       paymentSubmittedData: {},
       countriesList: [],
-      statesList: []
+      statesList: [],
+      agreeTAndC: false
     };
   },
   watch: {
@@ -403,7 +417,9 @@ export default {
     },
     StateData(nV, oV) {
       console.log('state data', nV, oV);
-      this.statesList = [...nV];
+      if (nV.length > 0) {
+        this.statesList = [...nV];
+      }
     }
   },
   methods: {

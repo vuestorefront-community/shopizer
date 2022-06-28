@@ -4,7 +4,7 @@
         class="container__lang container__lang--selected"
         @click="isLangModalOpen = !isLangModalOpen"
     >
-      <SfImage :src="addBasePath(`/icons/langs/${locale}.webp`)" width="20" alt="Flag" />
+      <img :src="addBasePath(`/icons/langs/${locale}.webp`)" width="20" alt="Flag" loading="lazy" />
     </SfButton>
     <SfBottomModal
       :is-open="isLangModalOpen"

@@ -19,7 +19,7 @@
         label="Copy address data from shipping"
         :required="false"
         valid
-        class="form__element"
+        class="form__element checkbox-card"
         :disabled="false"
         :selected="false"
         v-model="paymentData.sameAsShipping"
@@ -82,6 +82,7 @@
         "
         :required="false"
         error-message="Please type your state."
+        :disabled="statesList.length > 0 ? false : true"
         @blur="stateBlur = false"
       >
         <SfComponentSelectOption
@@ -163,7 +164,8 @@ export default {
     currentStep: String,
     shippingData: Object,
     countriesList: Array,
-    statesList: Array
+    statesList: Array,
+    paymentSubmittedData: Object
   },
   components: {
     SfInput,
@@ -175,7 +177,16 @@ export default {
   },
   data() {
     return {
-      countries: ['Austria', 'Azerbaijan', 'Sweden', 'Switzerland', 'Turkey', 'Ukraine', 'United Kingdom', 'Vatican City'],
+      countries: [{
+        name: 'Austria',
+        code: 'AU'
+      }, {
+        name: 'Canada',
+        code: 'CA'
+      }, {
+        name: 'Switzerland',
+        code: 'SW'
+      }],
       states: ['Lower Austria', 'Upper Austria', 'Styria', 'Bern/Berne', 'Luzern'],
       paymentData: {
         sameAsShipping: false,
@@ -253,6 +264,25 @@ export default {
         this.paymentData.state = '';
         this.paymentData.phoneNumber = '';
         this.paymentData.zipCode = '';
+      }
+    }
+  },
+  mounted() {
+    if (this.paymentSubmittedData.firstName) {
+      this.paymentData.firstName = this.paymentSubmittedData.firstName;
+      this.paymentData.lastName = this.paymentSubmittedData.lastName;
+      this.paymentData.streetName = this.paymentSubmittedData.streetName;
+      this.paymentData.city = this.paymentSubmittedData.city;
+      this.paymentData.country = this.paymentSubmittedData.country;
+      this.paymentData.state = this.paymentSubmittedData.state;
+      this.paymentData.phoneNumber = this.paymentSubmittedData.phoneNumber;
+      this.paymentData.zipCode = this.paymentSubmittedData.zipCode;
+      if (this.paymentSubmittedData.cardKeep === true) {
+        this.paymentData.cardHolder = this.paymentSubmittedData.cardHolder;
+        this.paymentData.cardNumber = this.paymentSubmittedData.cardNumber;
+        this.paymentData.cardYear = this.paymentSubmittedData.cardYear;
+        this.paymentData.cardMonth = this.paymentSubmittedData.cardMonth;
+        this.paymentData.cardKeep = this.paymentSubmittedData.cardKeep;
       }
     }
   }
@@ -347,4 +377,5 @@ export default {
     }
   }
 }
+
 </style>

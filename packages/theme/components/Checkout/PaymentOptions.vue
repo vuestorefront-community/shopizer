@@ -117,7 +117,7 @@
           label="Save this card for other purchases"
           :required="false"
           valid
-          class="form__element"
+          class="form__element checkbox-card"
           :disabled="false"
           :selected="false"
           v-model="cardData.cardKeep"
@@ -261,5 +261,8 @@ export default {
       --select-dropdown-color: blue;
     }
   }
+}
+.checkbox-card {
+  width: max-content;
 }
 </style>

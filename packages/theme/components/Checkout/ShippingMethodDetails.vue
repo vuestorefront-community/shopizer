@@ -68,6 +68,7 @@
         :required="true"
         :valid="stateBlur || validState(shippingData.state)"
         error-message="Please type your state."
+        :disabled="statesList.length > 0 ? false : true"
         @blur="stateBlur = false"
       >
         <SfComponentSelectOption
@@ -163,7 +164,8 @@ export default {
   props: {
     currentStep: String,
     countriesList: Array,
-    statesList: Array
+    statesList: Array,
+    shippingSubmittedData: Object
   },
   components: {
     SfInput,
@@ -227,7 +229,16 @@ export default {
             'Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.'
         }
       ],
-      countries: ['Austria', 'Azerbaijan', 'Sweden', 'Switzerland', 'Turkey', 'Ukraine', 'United Kingdom', 'Vatican City'],
+      countries: [{
+        name: 'Austria',
+        code: 'AU'
+      }, {
+        name: 'Canada',
+        code: 'CA'
+      }, {
+        name: 'Switzerland',
+        code: 'SW'
+      }],
       states: ['Lower Austria', 'Upper Austria', 'Styria', 'Bern/Berne', 'Luzern'],
       shippingData: {
         firstName: '',
@@ -324,7 +335,20 @@ export default {
     },
     onCountrySelect(v) {
       if (v && v !== '') {
+        this.shippingData.state = '';
         this.$emit('setStateListCountry', v);
+      }
+    }
+  },
+  mounted() {
+    if (this.shippingSubmittedData.firstName) {
+      this.shippingData = this.shippingSubmittedData;
+      if (this.shippingSubmittedData.shippingMethodSelected) {
+        this.shippingMethods.forEach(method => {
+          if (method.value === this.shippingSubmittedData.shippingMethodSelected) {
+            method.selected = true;
+          }
+        });
       }
     }
   }

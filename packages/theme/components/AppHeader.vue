@@ -8,7 +8,7 @@
       <!-- TODO: add mobile view buttons after SFUI team PR -->
       <template #logo>
         <nuxt-link :to="localePath({ name: 'home' })" class="sf-header__logo">
-          <SfImage :src='marketLogo' alt="Vue Storefront Next" class="sf-header__logo-image" v-if="marketLogo"/>
+          <img :src='marketLogo' alt="Vue Storefront Next" class="sf-header__logo-image sf-image sf-image-loaded" v-if="marketLogo"/>
         </nuxt-link>
       </template>
       <template #navigation>
@@ -269,6 +269,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "~@storefront-ui/vue/styles";
 .sf-header {
   box-shadow: 0 0 25px 0 rgb(0 0 0 / 6%);
   --header-padding:  var(--spacer-sm);
@@ -334,5 +335,11 @@ export default {
 }
 .sf-header.header-on-top {
   z-index: 4;
+}
+.sf-header__logo-image {
+    object-fit: cover;
+    width: var(--image-width);
+    height: var(--image-height, auto);
+    display: flex;
 }
 </style>
