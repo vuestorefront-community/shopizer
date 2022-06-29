@@ -251,17 +251,27 @@ export default {
     const SCREEN_THANK_YOU = 'thankYouAfterForgotten';
     const SCREEN_FORGOTTEN = 'forgottenPassword';
 
-    const { isLoginModalOpen, toggleLoginModal } = useUiState();
+    const { isLoginModalOpen, toggleLoginModal, logInModelType } = useUiState();
     const form = ref({});
     const formReg = ref({});
     const userEmail = ref('');
     const createAccount = ref(false);
     const rememberMe = ref(false);
+    const dummyCountries = ref([{
+      name: 'Austria',
+      code: 'AU'
+    }, {
+      name: 'Canada',
+      code: 'CA'
+    }, {
+      name: 'Switzerland',
+      code: 'SW'
+    }]);
     const { send: sendNotification} = useUiNotification();
     const { register, login, loading, error: userError } = useUser();
     const { request, error: forgotPasswordError, loading: forgotPasswordLoading } = useForgotPassword();
     const { getCountry, countryData, getState, stateData, getUserCartData } = useContent();
-    const currentScreen = ref(SCREEN_LOGIN);
+    const currentScreen = ref(logInModelType.value);
     const router = useRouter();
 
     onSSR(async () => {
@@ -304,6 +314,7 @@ export default {
       if (isLoginModalOpen) {
         form.value = {};
         resetErrorValues();
+        currentScreen.value = logInModelType.value;
       }
     });
 
@@ -314,7 +325,7 @@ export default {
     const handleForm = async () => {
       setTimeout(() => {
         resetSuccessValues();
-        toggleLoginModal();
+        toggleLoginModal(SCREEN_LOGIN);
         const localeAccountPath = root.localePath({ name: 'my-account' });
         return router.push(localeAccountPath);
       }, 3000);
@@ -323,7 +334,9 @@ export default {
     const closeModal = () => {
       resetErrorValues();
       setCurrentScreen(SCREEN_LOGIN);
-      toggleLoginModal();
+      toggleLoginModal(SCREEN_LOGIN);
+      createAccount.value = false;
+      rememberMe.value = false;
     };
 
     const handleRegister = async () => {
@@ -420,7 +433,8 @@ export default {
       SCREEN_FORGOTTEN,
       shipCountryData,
       getState,
-      shipStateData
+      shipStateData,
+      dummyCountries
     };
   }
 };

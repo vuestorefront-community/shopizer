@@ -92,11 +92,23 @@
             v-e2e="'product_add-to-cart'"
             :stock="product.quantity"
             v-model="qty"
-            :disabled="!product.available || !product.canBePurchased || !product.visible || product.quantity === 0"
+            :disabled="!product.available || !product.canBePurchased || !product.visible || product.quantity === 0 || qty === 0"
             :canAddToCart="product.quantity > 0"
             class="product__add-to-cart"
             @click="addItem({ product, quantity: parseInt(qty), customQuery: cartItem })"
-          />
+          >
+          <template #quantity-select-input>
+            <div class="sf-add-to-cart__select-quantity sf-quantity-selector">
+              <button data-testid="decrease" @click="qty > 0 && qty--" class="sf-button--pure sf-quantity-selector__button sf-button">−</button>
+              <div data-testid="quantitySelector1434ce217ec1b" class="sf-input sf-quantity-selector__input has-text">
+                <div class="sf-input__wrapper">
+                  <input id="quantitySelector1434ce217ec1b" v-model="qty" name="quantitySelector1434ce217ec1b" type="number" data-testid="sf-quantity-selector input" class="">
+                </div>
+              </div>
+              <button data-testid="increase" @click="qty++" class="sf-button--pure sf-quantity-selector__button sf-button">+</button>
+            </div>
+          </template>
+          </SfAddToCart>
         </div>
 
       </div>
@@ -252,7 +264,7 @@ export default {
     const cartItem = computed(() => cartGetters.getItems(cart.value));
     onSSR(async () => {
       await search({ sku: id.value, currentLanguageCode: 'en' });
-      await searchReviews({ productSku: id.value });
+      await searchReviews({ productId: products.value.id });
     });
 
     const product = computed(() => productGetters.getFiltered(products.value));
@@ -537,5 +549,58 @@ export default {
   .mainContainer{
     display: flex;
   }
+}
+.sf-add-to-cart__select-quantity {
+  --add-to-cart-select-quantity-margin: 0 var(--spacer-base) 0 0;
+    flex: none;
+    margin: 0 0 0 var(--spacer-xs);
+    margin: var(--add-to-cart-select-quantity-margin, 0 0 0 var(--spacer-xs));
+}
+.sf-quantity-selector {
+  position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: var(--quantity-selector-justify-content);
+    box-sizing: border-box;
+    height: 3.25rem;
+    height: var(--quantity-selector-height, 3.25rem);
+    width: 6.75rem;
+    width: var(--quantity-selector-width, 6.75rem);
+    background: var(--c-light);
+    background: var(--quantity-selector-background, var(--c-light));
+    font: var(--font-weight--normal) var(--font-size--lg)/1.6 var(--font-family--primary);
+    font: var(--quantity-selector-font, var(--quantity-selector-font-weight, var(--font-weight--normal)) var(--quantity-selector-font-size, var(--font-size--lg))/var(--quantity-selector-font-line-height, 1.6) var(--quantity-selector-font-family, var(--font-family--primary)));
+    border: solid var(--c-light);
+    border: var(--quantity-selector-border, var(--quantity-selector-border-style, solid) var(--quantity-selector-border-color, var(--c-light)));
+    border-width: 0;
+    border-width: var(--quantity-selector-border-width, 0);
+}
+.sf-quantity-selector__button {
+  --button-height: 100%;
+  --button-padding: var(--spacer-2xs) var(--spacer-xs) 0;
+  --button-background: transparent;
+  --button-color: var(--c-text);
+}
+.sf-input.has-text {
+    --input-label-top: 0;
+    --input-label-font-size: var(--font-size--xs);
+}
+.sf-quantity-selector__input {
+  --input-bar-display: none;
+  --input-height: var(--quantity-selector-height, 3.25rem);
+  --input-padding: 0;
+  --input-margin: 0;
+  --input-border: 0;
+  --input-text-align: center;
+}
+.sf-input__wrapper {
+    position: relative;
+    margin: var(--input-margin, 0 0 var(--spacer-xs) 0);
+    border-radius: 0;
+    width: 100%;
+    height: 100%;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
 </style>

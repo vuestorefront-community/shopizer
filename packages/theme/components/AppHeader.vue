@@ -19,16 +19,31 @@
       </template>
       <template #header-icons>
         <div v-e2e="'header-icons'" class="sf-header__icons">
-          <SfButton
-            class="sf-button--pure sf-header__action"
-            aria-label="Open account button"
-            @click="handleAccountClick"
-          >
-            <SfIcon
-              :icon="accountIcon"
-              size="1.25rem"
-            />
-          </SfButton>
+          <div class="sf-header--user__handler">
+            <SfButton
+              class="sf-button--pure sf-header__action user-account_btn"
+              aria-label="Open account button"
+              @click="handleAccountClick"
+            >
+              <SfIcon
+                :icon="accountIcon"
+                size="1.25rem"
+              />
+              <div class="sf-heading" v-if="isAuthenticated">
+              Hi - <span v-if="userData.firstName">{{userData.firstName}}</span><span v-if="userData.lastName"> {{userData.lastName}}</span>
+              </div>
+            </SfButton>
+            <div class="accountAction_dropdown">
+            <SfList v-if="!isAuthenticated" class="dropdownMenuCustom">
+              <p class="list-item" @click="openRegisterModel">Register</p>
+              <p class="list-item" @click="openLoginModel">Sign in</p>
+            </SfList>
+            <SfList v-else class="dropdownMenuCustom">
+              <p class="list-item" @click="openAccountPage">My Profile</p>
+              <p class="list-item" @click="logoutUser">Logout</p>
+            </SfList>
+          </div>
+          </div>
           <!-- <SfButton
             class="sf-button--pure sf-header__action"
             aria-label="Toggle wishlist sidebar"
@@ -143,13 +158,14 @@ export default {
     const router = useRouter();
     const { toggleCartSidebar, toggleWishlistSidebar, toggleLoginModal, isMobileMenuOpen } = useUiState();
     const { setTermForUrl, getFacetsFromURL } = useUiHelpers();
-    const { isAuthenticated } = useUser();
+    const { isAuthenticated, logout, user } = useUser();
     const { response } = useStore();
     const { cart } = useCart();
     const { searchAutocomplete, resultAuto } = useContent();
     const term = ref(getFacetsFromURL().phrase);
     const isSearchOpen = ref(false);
     const isAutocompleteOpen = ref(false);
+    const noLoginDropdown = ref(false);
     const searchBarRef = ref(null);
     const autocompleteData = ref([]);
     const result = ref(null);
@@ -160,19 +176,40 @@ export default {
     });
     const marketLogo = computed(() => marketGetters.getStoreLogo(response.value));
     const accountIcon = computed(() => isAuthenticated.value ? 'profile_fill' : 'profile');
+    const userData = computed(() => user.value);
 
     // if (typeof window !== 'undefined') {
     //   searchAutocomplete();
     // }
     // TODO: https://github.com/DivanteLtd/vue-storefront/issues/4927
     const handleAccountClick = () => {
+      noLoginDropdown.value = !noLoginDropdown.value;
+    };
+
+    const openRegisterModel = () => {
+      noLoginDropdown.value = false;
+      toggleLoginModal('register');
+    };
+
+    const openLoginModel = () => {
+      noLoginDropdown.value = false;
+      toggleLoginModal('login');
+    };
+
+    const openAccountPage = () => {
+      noLoginDropdown.value = false;
       if (typeof window !== 'undefined') {
         if (localStorage.getItem('token')) {
           const localeAccountPath = root.localePath({ name: 'my-account' });
           return router.push(localeAccountPath);
         }
       }
-      toggleLoginModal();
+    };
+
+    const logoutUser = async () => {
+      noLoginDropdown.value = false;
+      await logout();
+      return router.push(root.localePath({ name: 'home' }));
     };
 
     const closeSearch = () => {
@@ -262,7 +299,14 @@ export default {
       resultAuto,
       autocompleteData,
       isAutocompleteOpen,
-      selectFromAutocomplete
+      selectFromAutocomplete,
+      noLoginDropdown,
+      openRegisterModel,
+      openLoginModel,
+      openAccountPage,
+      isAuthenticated,
+      logoutUser,
+      userData
     };
   }
 };
@@ -302,36 +346,71 @@ export default {
   bottom: 60%;
   left: 40%;
 }
-.sf-search-bar {
-  .sf-list {
-    position: absolute;
-    top: 40px;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    z-index: 20;
-    background: #fff;
-    border: 1px solid rgb(0 0 0 / 20%);
-    box-shadow: 0 0 25px 0 rgb(0 0 0 / 6%);
-    .list-item {
-      border-bottom: 1px solid rgb(0 0 0 / 20%);
-      padding: 10px;
-      cursor: pointer;
-      margin: 0px;
-    }
-    .list-item:hover {
-      color: var(--c-primary);
-    }
-    .list-item:last-child {
-      border-bottom: none;
-    }
+.sf-list {
+  position: absolute;
+  top: 40px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  z-index: 20;
+  background: #fff;
+  border: 1px solid rgb(0 0 0 / 20%);
+  box-shadow: 0 0 25px 0 rgb(0 0 0 / 6%);
+  .list-item {
+    border-bottom: 1px solid rgb(0 0 0 / 20%);
+    padding: 10px;
+    cursor: pointer;
+    margin: 0px;
   }
-  .list-visible {
-    opacity: 1
+  .list-item:hover {
+    color: var(--c-primary);
   }
-  .list-hidden {
-    opacity: 0
+  .list-item:last-child {
+    border-bottom: none;
   }
+}
+.list-visible {
+  opacity: 1;
+}
+.list-hidden {
+  opacity: 0
+}
+.dropdownMenuCustom {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  text-align: center;
+  width: max-content;
+  align-items: center;
+  background: #fff none repeat scroll 0 0;
+  border: none;
+  top: 100%;
+  .list-item {
+    width: 100%
+  }
+}
+.accountAction_dropdown {
+  opacity: 0;
+  visibility: hidden;
+  transform: rotateX(0deg);
+  padding-top: 30px;
+  position: absolute;
+  top: 100%;
+  display: block;
+  width: 100%;
+  z-index: 9;
+}
+.sf-header--user__handler{
+  position: relative;
+  &:hover {
+  .accountAction_dropdown {
+    opacity: 1;
+    transition: all 0.5s ease 0s;
+    transform: rotateX(0deg);
+    transform-origin: center top 0;
+    visibility: visible;
+  }
+}
 }
 .sf-header.header-on-top {
   z-index: 4;

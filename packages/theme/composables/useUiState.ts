@@ -7,7 +7,8 @@ const state = reactive({
   isNewsletterModalOpen: false,
   isCategoryGridView: true,
   isFilterSidebarOpen: false,
-  isMobileMenuOpen: false
+  isMobileMenuOpen: false,
+  logInModelType: 'login'
 });
 
 const useUiState = (): any => {
@@ -29,10 +30,12 @@ const useUiState = (): any => {
   };
 
   const isLoginModalOpen = computed(() => state.isLoginModalOpen);
-  const toggleLoginModal = () => {
+  const toggleLoginModal = (type: any) => {
     if (state.isMobileMenuOpen) toggleMobileMenu();
     state.isLoginModalOpen = !state.isLoginModalOpen;
+    state.logInModelType = type;
   };
+  const logInModelType = computed(() => state.logInModelType);
 
   const isNewsletterModalOpen = computed(() => state.isNewsletterModalOpen);
   const toggleNewsletterModal = () => {
@@ -67,7 +70,8 @@ const useUiState = (): any => {
     changeToCategoryGridView,
     changeToCategoryListView,
     toggleFilterSidebar,
-    toggleMobileMenu
+    toggleMobileMenu,
+    logInModelType
   };
 };
 

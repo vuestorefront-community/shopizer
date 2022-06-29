@@ -32,18 +32,19 @@ const params: UseUserFactoryParams<User, UpdateParams, RegisterParams> = {
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  register: async (context: Context, params: any) => {
+  register: async (context: Context, dataReg: any) => {
     console.log('Mocked: useUser.register');
-    delete params.customQuery;
-    const data: any = await context.$shopizer.api.register(params);
+    delete dataReg.customQuery;
+    const data: any = await context.$shopizer.api.register(dataReg);
     // console.log(data)
     if (data.code === 200) {
       localStorage.setItem('token', data.data.token);
       await params.load(context);
+    } else {
+      throw {
+        data
+      };
     }
-    throw {
-      data
-    };
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
