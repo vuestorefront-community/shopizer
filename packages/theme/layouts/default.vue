@@ -166,4 +166,7 @@ select:focus {
     max-width: max-content;
   }
 }
+:focus-visible {
+  outline: none !important;
+}
 </style>

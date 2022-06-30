@@ -73,7 +73,7 @@ export default {
 
     const { logout, user, load: loadUser } = useUser();
     const { userCartData } = useContent();
-    const { load, cart, addItem: addItemToCart } = useCart();
+    const { load, cart, addItem: addItemToCart, clear } = useCart();
     const isMobile = computed(() => mapMobileObserver().isMobile.get());
     const activePage = computed(() => {
       const { pageName } = route.value.params;
@@ -103,6 +103,8 @@ export default {
     const changeActivePage = async (title) => {
       if (title === 'Log out') {
         await logout();
+        const customQuery = {cartId: null, currentLanguageCode: 'en'};
+        clear(customQuery);
         router.push(context.root.localePath({ name: 'home' }));
         return;
       }

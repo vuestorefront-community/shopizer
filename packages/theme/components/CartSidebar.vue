@@ -23,13 +23,17 @@
                 v-for="product in cartData.products"
                 v-e2e="'collected-product'"
                 :key="cartGetters.getItemSku(product)"
-                :image="addBasePath(cartGetters.getItemImage(product))"
                 :title="cartGetters.getItemName(product)"
                 :regular-price="cartGetters.getItemPrice(product).regular"
                 :special-price="cartGetters.getItemPrice(product).discounted ? cartGetters.getItemPrice(product).special : 0"
-                @click:remove="removeItem({ product: { id: product.id } })"
+                @click:remove="removeItem({ product: { id: product.id, sku: product.sku } })"
                 class="collected-product"
               >
+                <template #image>
+                  <span data-testid="image-wrapper" class="sf-image--wrapper sf-collected-product__image" style="--image-width:140px; --image-height:200px;">
+                    <img loading="lazy" :src="addBasePath(cartGetters.getItemImage(product))" srcset="" sizes="" width="140" height="200" alt="Console Lovia Rosewood" class="sf-image sf-image-loaded">
+                  </span>
+                </template>
                 <template #configuration>
                   <div class="collected-product__properties">
                     <!-- <SfProperty
@@ -46,7 +50,7 @@
                       :disabled="loading"
                       :qty="cartGetters.getItemQty(product)"
                       class="sf-collected-product__quantity-selector"
-                      @input="updateQuantity({ product: { id: product.id }, quantity: Number($event) })"
+                      @input="updateQuantity({ product: product, quantity: Number($event) })"
                     />
                   </div>
                 </template>
@@ -154,7 +158,7 @@ export default {
     const { isCartSidebarOpen, toggleCartSidebar } = useUiState();
     const { cart, removeItem, updateItemQty, loading } = useCart();
 
-    console.log(cart);
+    console.log('cart', cart);
     const cartData = computed(() => cartGetters.getItems(cart.value));
     const totals = computed(() => cartGetters.getTotals(cart.value));
     const totalItems = computed(() => cartGetters.getTotalItems(cart.value));

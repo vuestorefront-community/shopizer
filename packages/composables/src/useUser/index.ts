@@ -12,8 +12,11 @@ import type {
 const params: UseUserFactoryParams<User, UpdateParams, RegisterParams> = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   load: async (context: Context) => {
-    console.log('Mocked: useUser.load');
-    const token = localStorage.getItem('token');
+    console.log('Mocked: useUser.load', process.client);
+    let token;
+    if (process.client) {
+      token = localStorage.getItem('token');
+    }
     const user: any = await context.$shopizer.api.getProfileData(token);
     console.log(user);
     return user;
@@ -23,6 +26,10 @@ const params: UseUserFactoryParams<User, UpdateParams, RegisterParams> = {
   logOut: async (context: Context) => {
     console.log('Mocked: useUser.logOut');
     localStorage.removeItem('token');
+    if (localStorage.getItem('cartId')) {
+      localStorage.removeItem('cartId');
+    }
+    await params.load(context);
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -40,6 +47,7 @@ const params: UseUserFactoryParams<User, UpdateParams, RegisterParams> = {
     if (data.code === 200) {
       localStorage.setItem('token', data.data.token);
       await params.load(context);
+      return data;
     } else {
       throw {
         data

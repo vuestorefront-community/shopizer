@@ -109,7 +109,7 @@
         @change="onCountrySelect"
       >
         <SfComponentSelectOption
-          v-for="(countryOption, index) in countriesList"
+          v-for="(countryOption, index) in countries"
           :key="index"
           :value="countryOption.code"
         >

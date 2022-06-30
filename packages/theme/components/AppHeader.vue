@@ -160,7 +160,7 @@ export default {
     const { setTermForUrl, getFacetsFromURL } = useUiHelpers();
     const { isAuthenticated, logout, user } = useUser();
     const { response } = useStore();
-    const { cart } = useCart();
+    const { cart, clear } = useCart();
     const { searchAutocomplete, resultAuto } = useContent();
     const term = ref(getFacetsFromURL().phrase);
     const isSearchOpen = ref(false);
@@ -175,6 +175,7 @@ export default {
       return count ? count.toString() : null;
     });
     const marketLogo = computed(() => marketGetters.getStoreLogo(response.value));
+    const supportedLanguage = computed(() => marketGetters.getLanguages(response.value));
     const accountIcon = computed(() => isAuthenticated.value ? 'profile_fill' : 'profile');
     const userData = computed(() => user.value);
 
@@ -209,6 +210,11 @@ export default {
     const logoutUser = async () => {
       noLoginDropdown.value = false;
       await logout();
+      const customQuery = {cartId: null, currentLanguageCode: supportedLanguage.value ? supportedLanguage.value[0].code : 'en'};
+      clear(customQuery);
+      // if (router.history.current.path === '/my-account') {
+      //   return router.push(root.localePath({ name: 'home' }));
+      // }
       return router.push(root.localePath({ name: 'home' }));
     };
 

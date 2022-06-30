@@ -83,10 +83,10 @@
                   <tr class="sf-table__row">
                     <td data-v-68eea69a="" class="sf-table__data sf-confirm-order__table-image">
                       <span data-v-68eea69a="" data-testid="product-image-table-data" class="sf-image--wrapper" style="--image-width:82px; --image-height:124px;">
-                        <img loading="lazy" :src="cartGetters.getItemImage(product)" srcset="" sizes="" width="82" height="124" alt="Cream Beach Bag" data-testid="product-image-table-data" class="sf-image sf-image-loaded">
-                        <img src="" alt="Placeholder" width="82" height="124" class="sf-image--placeholder display-none">
-                        <span class="sf-image--overlay display-none"></span>
-                        <noscript></noscript>
+                        <img v-if="cartGetters.getItemImage(product)" loading="lazy" :src="cartGetters.getItemImage(product)" srcset="" sizes="" width="82" height="124" alt="Cream Beach Bag" data-testid="product-image-table-data" class="sf-image sf-image-loaded">
+                        <img v-if="!cartGetters.getItemImage(product)" src="/_nuxt/_/_/node_modules/@storefront-ui/shared/images/product_placeholder.svg"
+                        alt="Placeholder" width="82" height="124"
+                        class="sf-image--placeholder">
                       </span>
                     </td>
                     <td data-v-68eea69a="" class="sf-table__data sf-confirm-order__table-description" data-testid="product-description-table-data">
@@ -197,7 +197,8 @@ import {
   SfOrderSummary,
   SfOrderReview,
   SfInput,
-  SfCheckbox
+  SfCheckbox,
+  SfImage
 } from '@storefront-ui/vue';
 import { useCart, cartGetters, useContent, useUser, userGetters } from '@vue-storefront/shopizer';
 import { computed } from '@nuxtjs/composition-api';
@@ -205,7 +206,7 @@ import { useUiState } from '~/composables';
 import ProfileDetails from '~/components/Checkout/ProfileDetails';
 import ShippingMethodDetails from '~/components/Checkout/ShippingMethodDetails';
 import PaymentBillingDetails from '~/components/Checkout/PaymentBillingDetails';
-import { onSSR } from '@vue-storefront/core';
+import { onSSR, addBasePath } from '@vue-storefront/core';
 
 export default {
   name: 'Checkout',
@@ -249,7 +250,8 @@ export default {
       shipCountryData,
       setStateListCountry,
       StateData,
-      shippingQuote
+      shippingQuote,
+      addBasePath
     };
   },
   mounted() {
@@ -270,7 +272,8 @@ export default {
     ProfileDetails,
     ShippingMethodDetails,
     PaymentBillingDetails,
-    SfCheckbox
+    SfCheckbox,
+    SfImage
   },
   data() {
     return {

@@ -258,7 +258,10 @@ export default {
       padding: 0 0 var(--spacer-sm) 0;
       align-items: center;
       --select-option-font-size: var(--font-size--base);
-      --select-dropdown-color: blue;
+      --select-dropdown-color: none;
+    }
+    .credit-card-form__input:focus-visible {
+      outline: none;
     }
   }
 }

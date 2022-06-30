@@ -44,7 +44,7 @@ const params: UseCartFactoryParams<Cart, CartItem, Product> = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   removeItem: async (context: Context, { currentCart, product, customQuery }: any) => {
     console.log('Mocked: useCart.removeItem');
-    await context.$shopizer.api.deleteFromCart({productId: product.id, cartId: currentCart.code});
+    await context.$shopizer.api.deleteFromCart({productId: product.sku, cartId: currentCart.code});
     const data = await context.$shopizer.api.getCart({customQuery: { cartId: currentCart.code, currentLanguageCode: 'en', isLogin: localStorage.getItem('token') }});
     if (data) {
       return data;
@@ -56,17 +56,18 @@ const params: UseCartFactoryParams<Cart, CartItem, Product> = {
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  updateItemQty: async (context: Context, { currentCart, product, quantity, customQuery }) => {
+  updateItemQty: async (context: Context, { currentCart, product, quantity, customQuery }: any) => {
     const qty = quantity;
+    console.log('Mocked: useCart.updateItemQty', currentCart.code, product, quantity, customQuery);
     const response: any = await context.$shopizer.api.addToCart({product, cartId: currentCart, qty});
-    console.log('Mocked: useCart.updateItemQty');
     return response;
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  clear: async (context: Context, { currentCart }) => {
+  clear: async (context: Context, { customQuery }: any) => {
     console.log('Mocked: useCart.clear');
-    return {};
+    const cart = await context.$shopizer.api.getCart({customQuery});
+    return cart;
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

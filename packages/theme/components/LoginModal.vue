@@ -165,7 +165,7 @@
                   v-model="formReg.country"
                   @input="getState(formReg.country)"
                 >
-                  <SfSelectOption v-for="(country, i) in shipCountryData" :key="i" :value="country.code">{{country.name}}</SfSelectOption>
+                  <SfSelectOption v-for="(country, i) in dummyCountries" :key="i" :value="country.code">{{country.name}}</SfSelectOption>
                 </SfSelect>
             </ValidationProvider>
             <ValidationProvider rules="required" v-slot="{ errors }">
@@ -355,12 +355,11 @@ export default {
         }
       };
       await register({ user: param });
-      console.log(userError.value.register);
       const hasUserErrors = userError.value.register;
       if (hasUserErrors) {
         sendNotification({
           key: 'register_failed',
-          message: hasUserErrors.message,
+          message: hasUserErrors.data.message,
           type: 'danger',
           title: 'Register Failed.'
         });

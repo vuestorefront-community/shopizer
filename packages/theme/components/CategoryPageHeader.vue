@@ -40,7 +40,7 @@
 
     <div class="navbar__counter">
       <span class="navbar__label desktop-only">{{ $t('Products found') }}: </span>
-      <span class="desktop-only">{{ pagination.totalItems }}</span>
+      <span class="desktop-only item-count">{{ pagination.totalItems }}</span>
       <span class="navbar__label smartphone-only">{{ pagination.totalItems }} {{ $t('Items') }}</span>
     </div>
 
@@ -237,6 +237,19 @@ export default {
       text-decoration: none;
       color: var(--c-link);
     }
+  }
+}
+
+.navbar__counter {
+  @include for-desktop {
+    display: flex;
+  }
+  .item-count {
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
   }
 }
 .sort-by {
