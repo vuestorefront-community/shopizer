@@ -1,72 +1,90 @@
 <template>
-  <SfFooter :column="4" multiple class="footer">
-    <SfFooterColumn :title='merchant.name'>
-      <SfList>
-        <SfListItem>
-          <SfMenuItem
-            :label="`Copyright © ${new Date(merchant.inBusinessSince).getFullYear()} ${merchant.name}`"
-          />
-          <SfMenuItem
-            :label="`All Rights Reserved`"
-          />
-        </SfListItem>
-      </SfList>
-    </SfFooterColumn>
-    <SfFooterColumn :title="`Address`">
-      <SfList>
-        <SfListItem>
-          <SfMenuItem
-            :label="`${merchant.address.address} ${merchant.address.city},`"
-          />
-        </SfListItem>
-        <SfListItem>
-          <SfMenuItem
-            :label="`${merchant.address.stateProvince}, ${merchant.address.country}, ${merchant.address.postalCode}`"
-          />
-        </SfListItem>
-        <SfListItem>
-          <SfMenuItem
-            :label="`TEL : ${merchant.phone}`"
-          />
-        </SfListItem>
-        <SfListItem>
-          <SfMenuItem
-            :label="`E-mail : ${merchant.email}`"
-          />
-        </SfListItem>
-      </SfList>
-    </SfFooterColumn>
-    <SfFooterColumn :title="'USEFUL LINKS'">
-      <SfList>
-        <SfListItem
-          v-for="item in help"
-          :key="item"
-        >
-          <SfMenuItem
-            :to="localePath({ name: 'my-account' })"
-            :label="$t(item)"
-          />
-        </SfListItem>
-      </SfList>
-    </SfFooterColumn>
-    <!-- <SfFooterColumn :title="$t('Payment & Delivery')">
-      <SfList>
-        <SfListItem
-          v-for="item in paymentsDelivery"
-          :key="item"
-        >
-          <SfMenuItem
-            :label="$t(item)"
-          />
-        </SfListItem>
-      </SfList>
-    </SfFooterColumn> -->
-    <SfFooterColumn title="Social">
-      <div class="footer__socials">
-        <SfImage class="footer__social-image" v-for="item in social" :key="item" :src="addBasePath('/icons/'+item+'.svg')" :alt="item" width="32" height="32" />
+  <div class="footer_wrapper">
+    <SfFooter :column="4" multiple class="footer">
+      <SfFooterColumn :title='merchant.name'>
+        <SfList>
+          <SfListItem>
+            <SfMenuItem
+              :label="`Copyright © ${new Date(merchant.inBusinessSince).getFullYear()} ${merchant.name}`"
+            />
+            <SfMenuItem
+              :label="`All Rights Reserved`"
+            />
+          </SfListItem>
+        </SfList>
+      </SfFooterColumn>
+      <SfFooterColumn :title="`Address`">
+        <SfList>
+          <SfListItem>
+            <SfMenuItem
+              :label="`${merchant.address.address} ${merchant.address.city},`"
+            />
+          </SfListItem>
+          <SfListItem>
+            <SfMenuItem
+              :label="`${merchant.address.stateProvince}, ${merchant.address.country}, ${merchant.address.postalCode}`"
+            />
+          </SfListItem>
+          <SfListItem>
+            <SfMenuItem
+              :label="`TEL : ${merchant.phone}`"
+            />
+          </SfListItem>
+          <SfListItem>
+            <SfMenuItem
+              :label="`E-mail : ${merchant.email}`"
+            />
+          </SfListItem>
+        </SfList>
+        <SfList class="footer__socials">
+          <SfImage class="footer__social-image" v-for="item in social" :key="item" :src="addBasePath('/icons/'+item+'.svg')" :alt="item" width="32" height="32" />
+        </SfList>
+      </SfFooterColumn>
+      <SfFooterColumn :title="''" class="menu_column_footer">
+        <SfList class="menu_list_footer">
+          <SfListItem
+            v-for="item in help"
+            :key="item"
+          >
+            <SfMenuItem
+              :to="localePath({ name: 'my-account' })"
+              :label="$t(item.name)"
+              :link="item.link"
+            />
+          </SfListItem>
+        </SfList>
+      </SfFooterColumn>
+      <!-- <SfFooterColumn :title="$t('Payment & Delivery')">
+        <SfList>
+          <SfListItem
+            v-for="item in paymentsDelivery"
+            :key="item"
+          >
+            <SfMenuItem
+              :label="$t(item)"
+            />
+          </SfListItem>
+        </SfList>
+      </SfFooterColumn> -->
+      <SfFooterColumn title="Follow Us">
+        <div class="footer__follow-us">
+          <SfImage class="footer__follow-us--image" v-for="item in follow" :key="item" :src="addBasePath('/_nuxt/_/_/node_modules/@storefront-ui/shared/images/product_placeholder.svg')" :alt="item" width="32" height="32" />
+        </div>
+      </SfFooterColumn>
+    </SfFooter>
+    <div class="footer__extra">
+      <div class="footer__extra-wrapper">
+        <div class="left_side">
+            <span>Copyright © {{new Date(merchant.inBusinessSince).getFullYear()}} {{merchant.name}} All Rights Reserved</span>
+        </div>
+        <div class="right_side">
+          <div class="footer__socials">
+            <SfImage class="footer__social-image" v-for="item in social" :key="item" :src="addBasePath('/icons/'+item+'.svg')" :alt="item" width="32" height="32" />
+          </div>
+        </div>
       </div>
-    </SfFooterColumn>
-  </SfFooter>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -97,9 +115,40 @@ export default {
     return {
       aboutUs: ['Who we are', 'Quality in the details', 'Customer Reviews'],
       departments: ['Women fashion', 'Men fashion', 'Kidswear', 'Home'],
-      help: ['Contact', 'Login', 'Register'],
+      help: [{
+        name: 'Home',
+        link: '/'
+      }, {
+        name: 'Handbags',
+        link: '/'
+      },
+      {
+        name: 'Beach Bags',
+        link: '/'
+      },
+      {
+        name: 'Laptop bags',
+        link: '/'
+      },
+      {
+        name: 'Bags',
+        link: '/'
+      },
+      {
+        name: 'Contact Us',
+        link: '/'
+      },
+      {
+        name: 'Register',
+        link: '/'
+      },
+      {
+        name: 'Sign in',
+        link: '/'
+      }],
       paymentsDelivery: ['Purchase terms', 'Guarantee'],
-      social: ['facebook', 'pinterest', 'google', 'twitter', 'youtube'],
+      social: ['facebook', 'pinterest', 'google', 'youtube'],
+      follow: ['facebook', 'pinterest', 'google', 'youtube', 'instagram', 'reddit'],
       isMobile: false,
       desktopMin: 1024
     };
@@ -141,6 +190,58 @@ export default {
       max-width: 69rem;
       margin: 0 auto;
     }
+  }
+}
+.footer_wrapper {
+  .footer__extra {
+    background: #10161c;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    @include for-desktop {
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    .footer__extra-wrapper {
+      @include for-desktop {
+        max-width: 69rem;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+    .left_side {
+      padding: var(--spacer-xs) 0;
+      color: var(--_c-gray-primary);
+      text-align: center;
+      @include for-desktop {
+        text-align: left;
+      }
+    }
+  }
+}
+.menu_list_footer {
+  width: max-content;
+  margin: auto;
+  padding: 30px 20px;
+  background-color: #111214a1;
+  box-shadow: 1px 1px 1px 4px #292c3017;
+}
+.menu_column_footer {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  .sf-footer-column__title {
+    display: none;
+  }
+}
+.footer__follow-us {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  .footer__follow-us--image {
+    display: block;
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
   }
 }
 </style>

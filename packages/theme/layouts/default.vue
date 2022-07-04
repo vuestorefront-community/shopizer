@@ -33,7 +33,7 @@ import LazyHydrate from 'vue-lazy-hydration';
 import Notification from '~/components/Notification';
 import { onSSR } from '@vue-storefront/core';
 import { useRoute } from '@nuxtjs/composition-api';
-import { useCart, useStore, useUser } from '@vue-storefront/shopizer';
+import { useCart, useStore, useUser, useContent } from '@vue-storefront/shopizer';
 
 export default {
   name: 'DefaultLayout',
@@ -55,6 +55,7 @@ export default {
     const { load: loadStores } = useStore();
     const { load: loadUser } = useUser();
     const { load: loadCart } = useCart();
+    const { getConfigData } = useContent();
     // const { load: loadWishlist } = useWishlist();
     onSSR(async () => {
       await Promise.all([
@@ -67,6 +68,7 @@ export default {
     if (typeof window !== 'undefined') {
       loadCart({customQuery: { cartId: localStorage.getItem('cartId'), currentLanguageCode: 'en', isLogin: localStorage.getItem('token') } });
       loadUser();
+      getConfigData();
     }
     return {
       route
@@ -168,5 +170,8 @@ select:focus {
 }
 :focus-visible {
   outline: none !important;
+}
+.is_hidden {
+  display: none;
 }
 </style>

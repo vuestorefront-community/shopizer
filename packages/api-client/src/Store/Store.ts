@@ -10,3 +10,4 @@ export async function getStore(context: Context): Promise<object> {
     console.log(error);
   }
 }
+

@@ -149,7 +149,7 @@ export default {
   setup() {
     const { $config } = useContext();
     const { toggleNewsletterModal } = useUiState();
-    const { getFeaturedItem, featuredItemData } = useContent();
+    const { getFeaturedItem, featuredItemData, subscribeToNewsletter } = useContent();
     const { addItem: addItemToCart, cart } = useCart();
     onSSR(async () => {
       await getFeaturedItem();
@@ -280,8 +280,8 @@ export default {
       }
     ];
 
-    const onSubscribe = (emailAddress) => {
-      console.log(`Email ${emailAddress} was added to newsletter.`);
+    const onSubscribe = (subsData) => {
+      subscribeToNewsletter(subsData);
       toggleNewsletterModal();
     };
 

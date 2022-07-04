@@ -19,12 +19,30 @@
           :title="$t('Subscribe to newsletter')"
           class="modal__title desktop-only"
         />
-        <form @submit.prevent="$emit('email-submitted', emailAddress)">
+        <form @submit.prevent="subscribeUser">
+          <SfInput
+            type="firstName"
+            label="First Name"
+            v-model="firstName"
+            class="modal__input form__element--half"
+            error-message="Please type your first name"
+            :required="true"
+          />
+          <SfInput
+            type="lastName"
+            label="Last Name"
+            v-model="lastName"
+            class="modal__input"
+            error-message="Please type your last name"
+            :required="true"
+          />
           <SfInput
             type="email"
             :label="$t('Email address')"
             v-model="emailAddress"
+            error-message="Please type your email"
             class="modal__input"
+            :required="true"
           />
           <SfButton class="modal__button" type="submit">
             {{ $t('I confirm subscription') }}
@@ -67,14 +85,23 @@ export default {
     SfBar,
     SfLink
   },
-  setup() {
+  setup(props, { emit }) {
     const { isNewsletterModalOpen, toggleNewsletterModal } = useUiState();
 
     const isHidden = ref(true);
     const emailAddress = ref('');
+    const firstName = ref('');
+    const lastName = ref('');
 
     const closeModal = () => {
       toggleNewsletterModal();
+    };
+
+    const subscribeUser = () => {
+      emit('email-submitted', {email: emailAddress.value, firstName: firstName.value, lastName: lastName.value});
+      emailAddress.value = '';
+      firstName.value = '';
+      lastName.value = '';
     };
 
     return {
@@ -82,7 +109,10 @@ export default {
       toggleNewsletterModal,
       isHidden,
       emailAddress,
-      closeModal
+      firstName,
+      lastName,
+      closeModal,
+      subscribeUser
     };
   }
 };

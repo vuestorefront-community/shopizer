@@ -16,6 +16,7 @@ export const useContent = (): any => {
   const shippingQuote = sharedRef(null, 'shippingQuote');
   const shippingOptions = sharedRef(null, 'shippingOptions');
   const resultAuto = sharedRef(null, 'resultAuto');
+  const configData = sharedRef(null, 'config');
 
   const getCategoryHierarchy = async(params: any) => {
     console.log('load: getCategoryHierarchy');
@@ -100,6 +101,30 @@ export const useContent = (): any => {
     return resultAuto;
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const subscribeToNewsletter = async (params: any) => {
+    console.log('Mocked: useFacet.subscribeToNewsletter');
+    const result: any = await context.$shopizer.api.subscribeToNewsletter(params);
+    // if (data.code === 200) {
+    //   localStorage.setItem('token', data.data.token);
+    //   await params.load(context);
+    //   return data;
+    // } else {
+    //   throw {
+    //     data
+    //   };
+    // }
+    console.log('newsletter result', result);
+    return result;
+  };
+
+  const getConfigData = async(params: any) => {
+    console.log('load: getConfigData');
+    const config: any = await context.$shopizer.api.getConfig(params);
+    configData.value = config;
+    return config;
+  };
+
   return {
     getCategoryHierarchy,
     getContent,
@@ -113,6 +138,8 @@ export const useContent = (): any => {
     getShippingQuote,
     getShippingOptions,
     searchAutocomplete,
+    subscribeToNewsletter,
+    getConfigData,
     categoryData: computed(() => categoryresult.value),
     contentData: computed(() => contentresult.value),
     featuredItemData: computed(() => featureItemResult.value),
@@ -124,6 +151,7 @@ export const useContent = (): any => {
     userCartData: computed(() => userCartData.value),
     shippingQuote: computed(() => shippingQuote.value),
     shippingOptions: computed(() => shippingOptions.value),
-    resultAuto: computed(() => resultAuto.value)
+    resultAuto: computed(() => resultAuto.value),
+    configData: computed(() => configData.value)
   };
 };

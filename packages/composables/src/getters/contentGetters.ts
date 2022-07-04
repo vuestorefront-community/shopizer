@@ -27,6 +27,15 @@ function getvariants (items: any): any {
 function getCategoryDetail (items: any): any {
   return items ? items?.children : [];
 }
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function getContactUs (items: any): any {
+  return items ? items?.displayContactUs : true;
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function getShowSearch (items: any): any {
+  return items ? items?.displaySearchBox : true;
+}
 
 export const contentGetters = {
   getCategoryData,
@@ -34,5 +43,7 @@ export const contentGetters = {
   getFeatureItemsData,
   getManufactures,
   getvariants,
-  getCategoryDetail
+  getCategoryDetail,
+  getContactUs,
+  getShowSearch
 };

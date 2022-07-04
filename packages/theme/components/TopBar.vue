@@ -16,7 +16,7 @@
 <script>
 import { SfButton, SfTopBar } from '@storefront-ui/vue';
 import LocaleSelector from './LocaleSelector';
-import { useStore, marketGetters } from '@vue-storefront/shopizer';
+import { useStore, marketGetters, useContent, contentGetters } from '@vue-storefront/shopizer';
 import { computed } from '@nuxtjs/composition-api';
 
 export default {
@@ -27,10 +27,13 @@ export default {
   },
   setup() {
     const { response } = useStore();
+    const { configData } = useContent();
     const phoneNumber = computed(() => marketGetters.getPhoneNumber(response.value));
+    const contactUs = computed(() => contentGetters.getContactUs(configData.value));
 
     return {
-      phoneNumber
+      phoneNumber,
+      contactUs
     };
   }
 };

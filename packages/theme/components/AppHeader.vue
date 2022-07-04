@@ -71,10 +71,12 @@
       </template>
       <template #search>
         <SfSearchBar
+          v-if="showSearch"
           ref="searchBarRef"
           :placeholder="$t('Search for items')"
           aria-label="Search"
           class="sf-header__search"
+          :class="showSearch ? 'is_active': 'is_hidden'"
           :value="term"
           @input="handleSearch"
           @keydown.enter="handleSearch($event)"
@@ -124,7 +126,7 @@
 <script>
 import { SfHeader, SfImage, SfIcon, SfButton, SfBadge, SfSearchBar, SfOverlay, SfList } from '@storefront-ui/vue';
 import { useUiState } from '~/composables';
-import { useCart, useUser, cartGetters, useStore, marketGetters, useContent } from '@vue-storefront/shopizer';
+import { useCart, useUser, cartGetters, useStore, marketGetters, useContent, contentGetters } from '@vue-storefront/shopizer';
 import { computed, ref, watch, onBeforeUnmount, useRouter } from '@nuxtjs/composition-api';
 import { useUiHelpers } from '~/composables';
 import LocaleSelector from './LocaleSelector';
@@ -161,7 +163,7 @@ export default {
     const { isAuthenticated, logout, user } = useUser();
     const { response } = useStore();
     const { cart, clear } = useCart();
-    const { searchAutocomplete, resultAuto } = useContent();
+    const { searchAutocomplete, resultAuto, configData } = useContent();
     const term = ref(getFacetsFromURL().phrase);
     const isSearchOpen = ref(false);
     const isAutocompleteOpen = ref(false);
@@ -178,6 +180,7 @@ export default {
     const supportedLanguage = computed(() => marketGetters.getLanguages(response.value));
     const accountIcon = computed(() => isAuthenticated.value ? 'profile_fill' : 'profile');
     const userData = computed(() => user.value);
+    const showSearch = computed(() => contentGetters.getShowSearch(configData.value));
 
     // if (typeof window !== 'undefined') {
     //   searchAutocomplete();
@@ -312,7 +315,8 @@ export default {
       openAccountPage,
       isAuthenticated,
       logoutUser,
-      userData
+      userData,
+      showSearch
     };
   }
 };
