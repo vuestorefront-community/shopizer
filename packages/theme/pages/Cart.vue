@@ -95,7 +95,7 @@
                 :title="cartGetters.getItemName(product)"
                 :regular-price="cartGetters.getItemPrice(product).special"
                 class="sf-collected-product--detailed collected-product"
-                @click:remove="removeItem({ product: { id: product.id } })"
+                @click:remove="removeItem({ product: { id: product.id, sku: product.sku } })"
               >
                 <template #configuration>
                   <div class="collected-product__properties">

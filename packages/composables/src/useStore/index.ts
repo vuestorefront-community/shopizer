@@ -10,6 +10,7 @@ const params: UseStoreFactoryParams<Store> = {
   load: async (context: Context) => {
     console.log('Mocked: useUser.load');
     const response = await context.$shopizer.api.getStore(context);
+    console.log('storeResponse -> ', response);
     return response;
   },
 

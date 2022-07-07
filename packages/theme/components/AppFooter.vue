@@ -44,7 +44,7 @@
         <SfList class="menu_list_footer">
           <SfListItem
             v-for="item in help"
-            :key="item"
+            :key="item.name"
           >
             <SfMenuItem
               :to="localePath({ name: 'my-account' })"

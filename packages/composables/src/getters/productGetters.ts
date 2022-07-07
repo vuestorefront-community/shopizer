@@ -45,12 +45,29 @@ function getFiltered(products: any): Product[] {
 function getAttributes(products: any | Product): Record<string, AgnosticAttribute | string> {
   return {
     properties: products?.properties || [],
-    radioOptions: products?.variants?.length > 0 ? products?.variants.filter((option, index, self) => {
-      return self.map(x => x.variantValue.optionValue.code).indexOf(option.variantValue.optionValue.code) === index;
-    }).map(item => item.variantValue) : [],
-    selectOptions: products?.variants?.length > 0 ? products?.variants.filter((option, index, self) => {
-      return self.map(x => x.variant.optionValue.code).indexOf(option.variant.optionValue.code) === index;
-    }).map(item => item.variant) : [],
+    // radioOptions: products?.options?.length > 0 ? products?.options.filter((option) => {
+    //   return option.type === 'radio' && option?.optionValues;
+    // }) : [],
+    selectOptions: products?.options?.length > 0 ? products?.options.map((item: any) => {
+      const optionVal = item.optionValues.map((val: any) => {
+        return {
+          code: val.code,
+          name: val.name,
+          id: val.id,
+          available: true,
+          image: val.image
+        };
+      });
+      return {
+        type: item.type,
+        readOnly: item.readOnly,
+        code: item.code,
+        id: item.id,
+        name: item.name,
+        lang: item.lang,
+        optionValues: optionVal
+      };
+    }) : [],
     weight: products?.productSpecifications?.weight || '',
     length: products?.productSpecifications?.length || '',
     width: products?.productSpecifications?.width || '',

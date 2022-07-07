@@ -58,35 +58,37 @@
           <p class="product__description desktop-only">
             Available Quantity: {{productGetters.getQuantity(product)}}
           </p>
-          <SfSelect
-            v-e2e="'size-select'"
-            value=""
-            v-if="properties.selectOptions.length > 0"
-            :label="properties.selectOptions[0].option.name"
-            class="sf-select--underlined product__select-size"
-            valid
-            :required="true"
-            placeholder="Select Option"
-          >
-            <SfSelectOption
-              v-for="(size, i) in properties.selectOptions"
-              :key="i"
-              :value="size.optionValue.code"
-              @click="updateFilter({ color: size.optionValue.code })"
+          <div class="options-select" v-for="select in product.options" :key="select.id">
+            <SfSelect
+              v-e2e="'size-select'"
+              value=""
+              v-if="select.type === 'select' && select.optionValues.length > 0"
+              :label="select.name"
+              class="sf-select--underlined product__select-size"
+              valid
+              :required="true"
+              placeholder="Select Option"
+              @input="updateFilter({val: $value})"
             >
-              {{size.optionValue.name}}
-            </SfSelectOption>
-          </SfSelect>
-          <div v-if="properties.radioOptions.length > 0" class="product__colors desktop-only">
-            <p class="product__color-label">{{ properties.radioOptions[0].option.name }}:</p>
-            <SfRadio
-              v-for="(color, i) in properties.radioOptions"
-              :key="i"
-              :value="color.optionValue.code"
-              :label="color.optionValue.name"
-              class="product__color"
-              @change="updateFilter({ size: color.optionValue.code })"
-            />
+              <SfSelectOption
+                v-for="(size, i) in select.optionValues"
+                :key="i"
+                :value="size"
+              >
+                {{size.code}}
+              </SfSelectOption>
+            </SfSelect>
+            <div v-if="select.type === 'radio' && select.optionValues.length > 0" class="product__colors desktop-only">
+              <p class="product__color-label">{{ select.name }}:</p>
+              <SfRadio
+                v-for="(color, i) in select.optionValues"
+                :key="i"
+                :value="color.code"
+                :label="color.code"
+                class="product__color"
+                @change="updateFilter({code: select.code, value: color.code })"
+              />
+            </div>
           </div>
           <SfAddToCart
             v-e2e="'product_add-to-cart'"
@@ -242,7 +244,7 @@ import {
 
 import InstagramFeed from '~/components/InstagramFeed.vue';
 import RelatedProducts from '~/components/RelatedProducts.vue';
-import { ref, computed, useRoute, useRouter } from '@nuxtjs/composition-api';
+import { ref, computed, useRoute } from '@nuxtjs/composition-api';
 import { useProduct, useCart, productGetters, useReview, reviewGetters, cartGetters } from '@vue-storefront/shopizer';
 import { onSSR } from '@vue-storefront/core';
 import LazyHydrate from 'vue-lazy-hydration';
@@ -255,7 +257,7 @@ export default {
     const qty = ref(1);
     const form = ref({});
     const route = useRoute();
-    const router = useRouter();
+    // const router = useRouter();
     const { products, search } = useProduct('products');
     // const { products: relatedProducts, search: searchRelatedProducts, loading: relatedLoading } = useProduct('relatedProducts');
     const { addItem, loading, cart } = useCart();
@@ -269,6 +271,7 @@ export default {
 
     const product = computed(() => productGetters.getFiltered(products.value));
     const properties = computed(() => productGetters.getAttributes(products.value));
+    console.log('product', properties);
     // const options = computed(() => productGetters.getAttributes(products.value));
     // const configuration = computed(() => productGetters.getAttributes(product.value));
     // const categories = computed(() => productGetters.getCategoryIds(product.value));
@@ -284,13 +287,14 @@ export default {
     })));
 
     const updateFilter = (filter) => {
-      router.push({
-        path: route.value.path,
-        query: {
-          // ...configuration.value,
-          ...filter
-        }
-      });
+      console.log('filter', filter);
+      // router.push({
+      //   path: route.value.path,
+      //   query: {
+      //     // ...configuration.value,
+      //     ...filter
+      //   }
+      // });
     };
 
     return {
