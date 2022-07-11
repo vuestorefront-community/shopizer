@@ -58,22 +58,22 @@
           <p class="product__description desktop-only">
             Available Quantity: {{productGetters.getQuantity(product)}}
           </p>
-          <div class="options-select" v-for="select in product.options" :key="select.id">
+          <div class="options-select" v-for="(select, i) in product.options" :key="select.id">
             <SfSelect
               v-e2e="'size-select'"
-              value=""
-              v-if="select.type === 'select' && select.optionValues.length > 0"
+              v-model="selectedOption[i]"
               :label="select.name"
+              v-if="select.type === 'select' && select.optionValues.length > 0"
               class="sf-select--underlined product__select-size"
               valid
               :required="true"
               placeholder="Select Option"
-              @input="updateFilter({val: $value})"
+              @input="updateFilter({val: selectedOption, event: $event, selectCode: select.code})"
             >
               <SfSelectOption
                 v-for="(size, i) in select.optionValues"
                 :key="i"
-                :value="size"
+                :value="size.code"
               >
                 {{size.code}}
               </SfSelectOption>
@@ -256,6 +256,7 @@ export default {
   setup() {
     const qty = ref(1);
     const form = ref({});
+    const selectedOption = ref([]);
     const route = useRoute();
     // const router = useRouter();
     const { products, search } = useProduct('products');
@@ -287,7 +288,11 @@ export default {
     })));
 
     const updateFilter = (filter) => {
-      console.log('filter', filter);
+      console.log('filter', filter, selectedOption);
+      if (products.value && products?.value?.variants?.length > 0) {
+        console.log('product?.variants', products.value?.variants);
+        // const pro = products.value?.variants.filter(variant => {})
+      }
       // router.push({
       //   path: route.value.path,
       //   query: {
@@ -316,7 +321,8 @@ export default {
       properties,
       cartItem,
       form,
-      reviewLoading
+      reviewLoading,
+      selectedOption
     };
   },
   components: {
