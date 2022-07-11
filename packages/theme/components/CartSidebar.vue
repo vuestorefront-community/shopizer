@@ -26,7 +26,7 @@
                 :title="cartGetters.getItemName(product)"
                 :regular-price="cartGetters.getItemPrice(product).regular"
                 :special-price="cartGetters.getItemPrice(product).discounted ? cartGetters.getItemPrice(product).special : 0"
-                @click:remove="removeItem({ product: { id: product.id, sku: product.sku } })"
+                @click:remove="removeItem({ product: { id: product.id, sku: product.sku } });checkRemoved(product)"
                 class="collected-product"
               >
                 <template #image>
@@ -47,7 +47,7 @@
                 <template #input>
                   <div class="sf-collected-product__quantity-wrapper">
                     <SfQuantitySelector
-                      :disabled="loading"
+                      :disabled="loading && removingId === product.id"
                       :qty="cartGetters.getItemQty(product)"
                       class="sf-collected-product__quantity-selector"
                       @input="updateQuantity({ product: product, quantity: Number($event) })"
@@ -135,7 +135,7 @@ import {
   SfImage,
   SfQuantitySelector
 } from '@storefront-ui/vue';
-import { computed } from '@nuxtjs/composition-api';
+import { computed, ref } from '@nuxtjs/composition-api';
 import { useCart, cartGetters } from '@vue-storefront/shopizer';
 import { useUiState } from '~/composables';
 import debounce from 'lodash.debounce';
@@ -165,6 +165,12 @@ export default {
     const updateQuantity = debounce(async ({ product, quantity }) => {
       await updateItemQty({ product, quantity });
     }, 500);
+    const removingId = ref('');
+
+    const checkRemoved = (prod) => {
+      console.log(prod);
+      removingId.value = prod.id;
+    };
 
     return {
       addBasePath,
@@ -176,7 +182,9 @@ export default {
       toggleCartSidebar,
       totals,
       totalItems,
-      cartGetters
+      cartGetters,
+      checkRemoved,
+      removingId
     };
   }
 };
