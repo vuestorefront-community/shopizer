@@ -99,7 +99,7 @@ export default {
 'Download':'Télécharger',
 'Download all':'Tout télécharger',
 'View details':'Afficher les détails',
-'Manage shipping addresses':'Gérez toutes les adresses de livraison que vous souhaitez (lieu de travail, adresse du domicile...) De cette façon, vous n'aurez pas à saisir l'adresse de livraison manuellement avec chaque commande.',
+'Manage shipping addresses':'Gérez toutes les adresses de livraison que vous souhaitez (lieu de travail, adresse du domicile...) De cette façon, vous n"aurez pas à saisir l"adresse de livraison manuellement avec chaque commande.',
 'Quantity':'Quantité',
 'Price':'Prix',
 'Back to homepage':'Revenir à la page',

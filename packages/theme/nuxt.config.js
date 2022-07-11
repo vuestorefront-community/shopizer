@@ -100,7 +100,8 @@ export default {
     ],
     locales: [
       { code: 'en', label: 'English', file: 'en.js', iso: 'en' },
-      { code: 'de', label: 'German', file: 'de.js', iso: 'de' }
+      { code: 'de', label: 'German', file: 'de.js', iso: 'de' },
+      { code: 'fr', label: 'French', file: 'fr.js', iso: 'fr' }
     ],
     defaultLocale: 'en',
     lazy: true,
@@ -115,6 +116,11 @@ export default {
           }
         },
         de: {
+          currency: {
+            style: 'currency', currency: 'EUR', currencyDisplay: 'symbol'
+          }
+        },
+        fr: {
           currency: {
             style: 'currency', currency: 'EUR', currencyDisplay: 'symbol'
           }
