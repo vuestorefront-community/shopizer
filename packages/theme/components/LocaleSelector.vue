@@ -13,7 +13,7 @@
     >
       <SfList>
         <SfListItem v-for="lang in availableLocales" :key="lang.code">
-          <a :href="switchLocalePath(lang.code)">
+          <a :href="switchLocalePath(lang.code)" @click="routChange($event, lang.code)">
             <SfCharacteristic class="language">
               <template #title>
                 <span>{{ $t(lang.code) }}</span>
@@ -57,11 +57,19 @@ export default {
     // const availableLocales = computed(() => locales.filter(i => i.code !== locale));
     // console.log(availableLocales);
     const availableLocales = computed(() => marketGetters.getLanguages(response.value));
+    const routChange = (e, lang) => {
+      console.log(locale, lang);
+      if (locale !== lang) {
+        document.cookie = 'vsf-locale=;expires=' + new Date();
+        document.cookie = 'i18n_redirected=' + lang;
+      }
+    };
     return {
       availableLocales,
       locale,
       isLangModalOpen,
-      addBasePath
+      addBasePath,
+      routChange
     };
   }
 };
